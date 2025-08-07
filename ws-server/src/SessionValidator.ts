@@ -67,7 +67,7 @@ export class SessionValidator {
         return null;
       }
 
-      const result = await response.json();
+      const result = await response.json() as { success?: boolean; data?: SessionData };
       if (!result.success || !result.data) {
         return null;
       }

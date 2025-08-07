@@ -1,5 +1,4 @@
 import type { AuthenticatedWebSocket, WSMessage } from './types.js';
-import { WSMessageType } from './types.js';
 
 export class ConnectionManager {
   private sessions: Map<string, Set<AuthenticatedWebSocket>> = new Map();
@@ -114,7 +113,7 @@ export class ConnectionManager {
   }
 
   checkHeartbeats(): void {
-    this.sessions.forEach((connections, sessionId) => {
+    this.sessions.forEach((connections) => {
       connections.forEach(ws => {
         if (ws.isAlive === false) {
           console.log(`[Heartbeat] Terminating inactive connection: ${ws.playerId}`);
