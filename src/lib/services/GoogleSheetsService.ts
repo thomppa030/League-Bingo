@@ -33,9 +33,10 @@ export class GoogleSheetsService {
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    this.apiKey = Deno.env.get('GOOGLE_SHEETS_API_KEY') || '';
-    this.sheetId = Deno.env.get('GOOGLE_SHEETS_ID') || '';
-    this.range = Deno.env.get('GOOGLE_SHEETS_RANGE') || 'Sheet1!A2:J1000';
+    // In browser/Vite environment, use import.meta.env
+    this.apiKey = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY || '';
+    this.sheetId = import.meta.env.VITE_GOOGLE_SHEETS_ID || '';
+    this.range = import.meta.env.VITE_GOOGLE_SHEETS_RANGE || 'Sheet1!A2:J1000';
 
     if (!this.apiKey || !this.sheetId) {
       console.warn('[Sheets] Missing Google Sheets configuration, using fallback data');
