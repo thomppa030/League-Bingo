@@ -265,6 +265,81 @@ class SessionManager {
     }
   }
 
+  async claimSquare(squareId: string, evidence?: string): Promise<void> {
+    const ws = get(wsConnection);
+    const player = get(currentPlayer);
+    const session = get(currentSession);
+    
+    if (!ws || !player || !session) {
+      console.error("Cannot claim square: No WebSocket connection, player data, or session");
+      return;
+    }
+
+    const message: WSMessage = {
+      type: "square_claimed" as WSMessageType,
+      sessionId: session.id,
+      timestamp: new Date(),
+      data: {
+        playerId: player.id,
+        squareId,
+        evidence,
+        timestamp: new Date(),
+      },
+    };
+
+    ws.send(JSON.stringify(message));
+  }
+
+  async confirmSquare(playerId: string, squareId: string): Promise<void> {
+    const ws = get(wsConnection);
+    const player = get(currentPlayer);
+    const session = get(currentSession);
+    
+    if (!ws || !player || !player.isGM || !session) {
+      console.error("Cannot confirm square: No WebSocket connection, not GM, or no session");
+      return;
+    }
+
+    const message: WSMessage = {
+      type: "square_confirmed" as WSMessageType,
+      sessionId: session.id,
+      timestamp: new Date(),
+      data: {
+        playerId,
+        squareId,
+        gmId: player.id,
+        timestamp: new Date(),
+      },
+    };
+
+    ws.send(JSON.stringify(message));
+  }
+
+  async rejectSquare(playerId: string, squareId: string): Promise<void> {
+    const ws = get(wsConnection);
+    const player = get(currentPlayer);
+    const session = get(currentSession);
+    
+    if (!ws || !player || !player.isGM || !session) {
+      console.error("Cannot reject square: No WebSocket connection, not GM, or no session");
+      return;
+    }
+
+    const message: WSMessage = {
+      type: "square_rejected" as WSMessageType,
+      sessionId: session.id,
+      timestamp: new Date(),
+      data: {
+        playerId,
+        squareId,
+        gmId: player.id,
+        timestamp: new Date(),
+      },
+    };
+
+    ws.send(JSON.stringify(message));
+  }
+
   private connectWebSocket(sessionId: string): void {
     connectionStatus.set("connecting");
     
@@ -390,6 +465,82 @@ class SessionManager {
             ...s,
             status: "playing" as SessionStatus,
           };
+        });
+        break;
+
+      case "square_claimed":
+        // Update the square status in the player's card
+        currentSession.update((s) => {
+          if (!s || !s.cards) return s;
+          
+          const updatedCards = s.cards.map(card => {
+            if (card.playerID === message.data.playerId) {
+              return {
+                ...card,
+                squares: card.squares.map(row =>
+                  row.map(square => 
+                    square.id === message.data.squareId
+                      ? { ...square, isCompleted: true, completedAt: message.data.timestamp }
+                      : square
+                  )
+                ),
+              };
+            }
+            return card;
+          });
+          
+          return { ...s, cards: updatedCards };
+        });
+        break;
+
+      case "square_confirmed":
+        // GM confirmed a square claim
+        currentSession.update((s) => {
+          if (!s || !s.cards) return s;
+          
+          const updatedCards = s.cards.map(card => {
+            if (card.playerID === message.data.playerId) {
+              return {
+                ...card,
+                squares: card.squares.map(row =>
+                  row.map(square => 
+                    square.id === message.data.squareId
+                      ? { ...square, isConfirmed: true }
+                      : square
+                  )
+                ),
+              };
+            }
+            return card;
+          });
+          
+          // Update player scores
+          const updatedPlayers = s.players.map(p => 
+            p.id === message.data.playerId
+              ? { ...p, totalScore: p.totalScore + (message.data.points || 0) }
+              : p
+          );
+          
+          return { ...s, cards: updatedCards, players: updatedPlayers };
+        });
+        break;
+
+      case "pattern_completed":
+        // A player completed a pattern
+        currentSession.update((s) => {
+          if (!s || !s.cards) return s;
+          
+          const updatedCards = s.cards.map(card => {
+            if (card.playerID === message.data.playerId) {
+              return {
+                ...card,
+                completedPatterns: [...card.completedPatterns, message.data.pattern],
+              };
+            }
+            return card;
+          });
+          
+          return { ...s, cards: updatedCards };
         });
         break;
 
