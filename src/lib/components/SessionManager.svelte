@@ -267,23 +267,38 @@
     }
   }
 
+  let showClaimModal = false;
+  let claimingSquare: any = null;
+  let claimEvidence = "";
+
   async function handleSquareClaim(square: any) {
     if (square.isCompleted || square.text === 'FREE SPACE') return;
     
-    console.log('[UI] Claiming square:', square.text);
+    console.log('[UI] Opening claim modal for square:', square.text);
     
-    // For now, just mark as completed locally
-    // Later this will trigger the WebSocket message to the server
-    square.isCompleted = true;
-    square.completedAt = new Date();
+    // Open the claim modal
+    claimingSquare = square;
+    showClaimModal = true;
+  }
+
+  async function confirmSquareClaim() {
+    if (!claimingSquare) return;
     
-    // Update player score
-    if (myPlayer) {
-      myPlayer.totalScore += square.points;
-    }
+    console.log('[UI] Claiming square via WebSocket:', claimingSquare.text);
     
-    // Trigger reactivity
-    $currentSession = $currentSession;
+    // Send claim via WebSocket
+    await sessionManager.claimSquare(claimingSquare.id, claimEvidence);
+    
+    // Close modal and reset
+    showClaimModal = false;
+    claimingSquare = null;
+    claimEvidence = "";
+  }
+
+  function cancelSquareClaim() {
+    showClaimModal = false;
+    claimingSquare = null;
+    claimEvidence = "";
   }
 </script>
 
@@ -1203,6 +1218,62 @@
             </div>
           </Card>
 
+          <!-- GM: Pending Claims -->
+          {#if $isGM && $currentSession?.settings?.requireGMConfirmation}
+            <Card variant="accent" shadow="md">
+              <h3
+                style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
+              >
+                Pending Claims (GM)
+              </h3>
+              <div
+                style="display: flex; flex-direction: column; gap: var(--space-3);"
+              >
+                {#if $currentSession.pendingClaims && $currentSession.pendingClaims.length > 0}
+                  {#each $currentSession.pendingClaims as claim}
+                    <div
+                      style="
+                        padding: var(--space-3);
+                        background: var(--glass-bg);
+                        border: 1px solid var(--glass-border);
+                        border-radius: var(--radius-md);
+                      "
+                    >
+                      <div style="font-weight: var(--font-weight-medium); margin-bottom: var(--space-1);">
+                        {claim.playerName} - "{claim.squareText}"
+                      </div>
+                      {#if claim.evidence}
+                        <div style="font-size: var(--font-size-sm); color: var(--color-muted-foreground); margin-bottom: var(--space-2);">
+                          Evidence: {claim.evidence}
+                        </div>
+                      {/if}
+                      <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2);">
+                        <Button 
+                          variant="success" 
+                          size="sm"
+                          on:click={() => sessionManager.confirmSquare(claim.playerId, claim.squareId)}
+                        >
+                          Approve
+                        </Button>
+                        <Button 
+                          variant="danger" 
+                          size="sm"
+                          on:click={() => sessionManager.rejectSquare(claim.playerId, claim.squareId)}
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  {/each}
+                {:else}
+                  <div style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);">
+                    No pending claims
+                  </div>
+                {/if}
+              </div>
+            </Card>
+          {/if}
+
           <!-- Recent Activity -->
           <Card variant="default" shadow="md">
             <h3
@@ -1228,5 +1299,113 @@
         </div>
       </div>
     </div>
+  </div>
+{/if}
+
+<!-- Square Claim Modal -->
+{#if showClaimModal && claimingSquare}
+  <div
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: var(--z-modal);
+      backdrop-filter: var(--backdrop-blur-md);
+    "
+  >
+    <Card
+      variant="glass"
+      shadow="xl"
+      style="max-width: 500px; margin: var(--space-4);"
+    >
+      <h3
+        style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-4);"
+      >
+        Claim Bingo Square
+      </h3>
+
+      <div
+        style="
+          padding: var(--space-4);
+          background: {getCategoryColor(claimingSquare.category)};
+          color: white;
+          border-radius: var(--radius-md);
+          margin-bottom: var(--space-6);
+          text-align: center;
+        "
+      >
+        <div
+          style="font-weight: var(--font-weight-semibold); margin-bottom: var(--space-2);"
+        >
+          "{claimingSquare.text}"
+        </div>
+        <div
+          style="display: flex; justify-content: center; gap: var(--space-4); font-size: var(--font-size-sm);"
+        >
+          <span>Category: {claimingSquare.category}</span>
+          <span>Difficulty: {claimingSquare.difficulty}</span>
+          <span>Points: {claimingSquare.points}</span>
+        </div>
+      </div>
+
+      {#if $currentSession?.settings?.requireGMConfirmation}
+        <div style="margin-bottom: var(--space-4);">
+          <label
+            style="
+              display: block;
+              font-weight: var(--font-weight-medium);
+              margin-bottom: var(--space-2);
+              color: var(--color-foreground);
+            "
+          >
+            Evidence or Description (Optional)
+          </label>
+          <textarea
+            bind:value={claimEvidence}
+            placeholder="Describe how you completed this challenge..."
+            style="
+              width: 100%;
+              padding: var(--space-3);
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius-md);
+              background: var(--color-surface);
+              color: var(--color-foreground);
+              font-size: var(--font-size-base);
+              min-height: 100px;
+              resize: vertical;
+            "
+          />
+        </div>
+      {/if}
+
+      <p
+        style="color: var(--color-muted-foreground); margin-bottom: var(--space-6); line-height: var(--line-height-relaxed);"
+      >
+        {#if $currentSession?.settings?.requireGMConfirmation}
+          Your claim will be sent to the Game Master for verification.
+        {:else}
+          This square will be marked as completed immediately.
+        {/if}
+      </p>
+
+      <div
+        style="display: flex; gap: var(--space-3); justify-content: flex-end;"
+      >
+        <Button variant="secondary" on:click={cancelSquareClaim}>Cancel</Button>
+        <Button variant="primary" on:click={confirmSquareClaim}>
+          {#if $connectionStatus !== "connected"}
+            No Connection
+          {:else}
+            Claim Square
+          {/if}
+        </Button>
+      </div>
+    </Card>
   </div>
 {/if}
