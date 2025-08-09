@@ -37,11 +37,16 @@ export const POST: RequestHandler = async ({ request }) => {
     
   } catch (error) {
     console.error('Error creating session:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'Unknown error type');
+    console.error('Environment DATABASE_URL present:', !!process.env.DATABASE_URL);
+    console.error('Environment vars:', Object.keys(process.env).filter(k => k.includes('DATABASE')));
+    
     return json<ApiResponse>({
       success: false,
       error: {
         code: 'SERVER_ERROR',
-        message: 'Failed to create session'
+        message: 'Failed to create session',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       timestamp: new Date()
     }, { status: 500 });
