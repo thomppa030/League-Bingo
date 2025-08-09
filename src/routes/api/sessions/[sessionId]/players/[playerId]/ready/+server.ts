@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { ApiResponse } from '$lib/types';
 import { postgresSessionStore, initializePostgreSQLStore } from '$lib/server/postgresSessionStore';
+import { broadcastToSession } from '$lib/server/sessionStore';
 
 export const PUT: RequestHandler = async ({ params, request }) => {
   try {
@@ -30,6 +31,17 @@ export const PUT: RequestHandler = async ({ params, request }) => {
       const status = result.error?.code === 'PLAYER_NOT_FOUND' ? 404 : 500;
       return json<ApiResponse>(result, { status });
     }
+    
+    // Broadcast player ready status change to WebSocket clients
+    await broadcastToSession(sessionId, {
+      type: 'player_updated',
+      sessionId: sessionId,
+      data: {
+        playerId: playerId,
+        isReady: ready
+      },
+      timestamp: new Date()
+    });
     
     return json<ApiResponse>(result);
     

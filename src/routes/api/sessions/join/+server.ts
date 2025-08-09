@@ -5,6 +5,7 @@ import type {
   ApiResponse
 } from '$lib/types';
 import { postgresSessionStore, initializePostgreSQLStore } from '$lib/server/postgresSessionStore';
+import { broadcastToSession } from '$lib/server/sessionStore';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
@@ -30,6 +31,20 @@ export const POST: RequestHandler = async ({ request }) => {
     
     if (!result.success) {
       return json<ApiResponse>(result, { status: result.error?.code === 'SESSION_NOT_FOUND' ? 404 : 400 });
+    }
+    
+    // Broadcast player joined event to WebSocket clients
+    if (result.success && result.data && typeof result.data === 'object' && 'session' in result.data && 'player' in result.data) {
+      const { session, player } = result.data as any;
+      await broadcastToSession(session.id, {
+        type: 'player_joined',
+        sessionId: session.id,
+        data: {
+          player: player,
+          session: session // Include full session data so clients can update their state
+        },
+        timestamp: new Date()
+      });
     }
     
     return json<ApiResponse>(result);
