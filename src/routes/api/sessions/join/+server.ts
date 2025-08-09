@@ -9,7 +9,7 @@ import type {
   ApiResponse,
   Player
 } from '$lib/types';
-import { sessions, sessionsByCode } from '$lib/server/sessionStore';
+import { sessions, sessionsByCode, broadcastToSession } from '$lib/server/sessionStore';
 
 function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -114,7 +114,13 @@ export const POST: RequestHandler = async ({ request }) => {
     session.players.push(newPlayer);
     session.updatedAt = new Date();
     
-    // Broadcast player joined event (would be done via WebSocket in production)
+    // Broadcast player joined event via WebSocket
+    broadcastToSession(sessionId, {
+      type: 'player_joined',
+      sessionId: sessionId,
+      data: newPlayer,
+      timestamp: new Date()
+    });
     
     return json<ApiResponse<{ session: Session; player: Player }>>({
       success: true,
