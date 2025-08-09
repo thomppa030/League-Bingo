@@ -178,9 +178,14 @@ class SessionManager {
     const session = get(currentSession);
     const player = get(currentPlayer);
 
-    if (!session || !player) return;
+    if (!session || !player) {
+      console.error("Cannot update ready status: missing session or player");
+      return;
+    }
 
     try {
+      console.log(`Updating ready status to ${ready} for player ${player.id}`);
+      
       const response = await fetch(
         `/api/sessions/${session.id}/players/${player.id}/ready`,
         {
@@ -189,8 +194,16 @@ class SessionManager {
           body: JSON.stringify({ ready }),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      console.log("Ready status updated successfully");
+      
     } catch (error) {
       console.error("Failed to update ready status:", error);
+      throw error; // Re-throw so UI can handle it
     }
   }
 

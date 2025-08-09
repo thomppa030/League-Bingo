@@ -205,8 +205,23 @@
   }
 
   async function toggleReady() {
-    if (!myPlayer) return;
-    await sessionManager.updatePlayerReady(!myPlayer.isReady);
+    if (!myPlayer) {
+      console.error("Cannot toggle ready: no player data");
+      return;
+    }
+    
+    loading = true;
+    error = "";
+    
+    try {
+      console.log("Toggling ready status from", myPlayer.isReady, "to", !myPlayer.isReady);
+      await sessionManager.updatePlayerReady(!myPlayer.isReady);
+    } catch (err) {
+      error = "Failed to update ready status";
+      console.error("Toggle ready error:", err);
+    } finally {
+      loading = false;
+    }
   }
 
   async function updateCategories() {
@@ -873,6 +888,8 @@
         {#if myPlayer && !myPlayer.isGM}
           <Button
             variant={myPlayer.isReady ? "secondary" : "primary"}
+            {loading}
+            disabled={loading}
             on:click={toggleReady}
           >
             {myPlayer.isReady ? "Not Ready" : "Ready"}
