@@ -8,6 +8,10 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "start:prod": "NODE_ENV=production node dist/server.js",
+    "deploy:railway": "railway up",
+    "deploy:render": "render deploy",
+    "deploy:fly": "fly deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

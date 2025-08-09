@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: league-bingo-ws
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    
+    # Health check configuration
+    healthCheckPath: /health
+    
+    # Auto-deploy from GitHub (optional - configure in Render dashboard)
+    autoDeploy: false
+    
+    # Environment variables (set these in Render dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      # Add these in Render dashboard:
+      # - API_URL (your SvelteKit app URL)
+      # - ALLOWED_ORIGINS (comma-separated list)
+      # - REDIS_URL (optional)
+      
+    # Scaling configuration for free tier
+    scaling:
+      minInstances: 1
+      maxInstances: 1

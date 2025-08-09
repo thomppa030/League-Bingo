@@ -9,9 +9,19 @@ import type {
   WSMessage,
   WSMessageType,
 } from "../types.ts";
+import { persistenceManager } from "./persistenceStore";
 
 export const currentSession = writable<Session | null>(null);
 export const currentPlayer = writable<Player | null>(null);
+
+// Subscribe to store changes to persist them
+currentSession.subscribe((session) => {
+  persistenceManager.saveSession(session);
+});
+
+currentPlayer.subscribe((player) => {
+  persistenceManager.savePlayer(player);
+});
 export const connectionStatus = writable<
   "connected" | "connecting" | "disconnected"
 >("disconnected");
@@ -46,11 +56,37 @@ class SessionManager {
   private reconnectedAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectedDelay = 1000;
+  private hasRestored = false;
 
   constructor() {
     // WebSocket server URL - defaults to local development
     // In production, set VITE_WS_URL to your WebSocket server URL
     this.wsUrl = import.meta.env?.VITE_WS_URL || 'ws://localhost:8080';
+  }
+
+  async restoreSession(): Promise<boolean> {
+    if (this.hasRestored) return false;
+    this.hasRestored = true;
+
+    const savedSession = persistenceManager.loadSession();
+    const savedPlayer = persistenceManager.loadPlayer();
+
+    if (savedSession && savedPlayer) {
+      console.log('Restoring session from localStorage:', savedSession.id);
+      
+      // Restore the stores
+      currentSession.set(savedSession);
+      currentPlayer.set(savedPlayer);
+      
+      // Reconnect WebSocket if session is active
+      if (savedSession.status !== 'completed') {
+        this.connectWebSocket(savedSession.id);
+      }
+      
+      return true;
+    }
+    
+    return false;
   }
 
   async createSession(
@@ -564,6 +600,9 @@ class SessionManager {
     connectionStatus.set("disconnected");
     wsConnection.set(null);
     this.reconnectedAttempts = 0;
+    
+    // Clear persistence when cleaning up
+    persistenceManager.clearAll();
   }
 
   getSession(): Session | null {

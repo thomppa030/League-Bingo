@@ -59,15 +59,26 @@
   $: allPlayersReady =
     $sessionPlayers.length > 1 && $sessionPlayers.every((p) => p.isReady);
 
-  onMount(() => {
-    // Auto-navigate based on current session state
+  onMount(async () => {
+    // Check if session was restored from persistence
     if ($currentSession) {
+      console.log('Session detected on mount, status:', $currentSession.status);
+      
+      // Navigate to the appropriate view based on session status
       if ($currentSession.status === "setup") {
         currentView = "lobby";
       } else if ($currentSession.status === "category_selection") {
         currentView = "categories";
       } else if ($currentSession.status === "playing") {
         currentView = "game";
+      }
+      
+      // If player exists, populate role selection if needed
+      if ($currentPlayer && !$currentPlayer.isGM) {
+        selectedCategories = $currentPlayer.categories || [Category.PERFORMANCE, Category.SOCIAL];
+        if ($currentPlayer.role) {
+          joinForm.role = $currentPlayer.role;
+        }
       }
     }
   });
