@@ -65,18 +65,20 @@ class SessionManager {
     console.log('WebSocket URL configured:', this.wsUrl);
     console.log('Environment:', import.meta.env.MODE);
     
-    // Perform network diagnostics
-    this.performNetworkDiagnostics();
+    // Perform network diagnostics only in browser
+    if (typeof window !== 'undefined') {
+      this.performNetworkDiagnostics();
+    }
   }
 
   private async performNetworkDiagnostics(): Promise<void> {
     console.log("🔍 Network Diagnostics:");
-    console.log("🌐 Navigator online:", navigator.onLine);
-    console.log("🔌 Connection type:", (navigator as any).connection?.effectiveType || 'unknown');
-    console.log("📡 Connection downlink:", (navigator as any).connection?.downlink || 'unknown');
-    console.log("🛡️ Secure context:", window.isSecureContext);
-    console.log("🖥️ Platform:", navigator.platform);
-    console.log("🌍 User Agent:", navigator.userAgent);
+    console.log("🌐 Navigator online:", typeof navigator !== 'undefined' ? navigator.onLine : undefined);
+    console.log("🔌 Connection type:", typeof navigator !== 'undefined' ? (navigator as any).connection?.effectiveType || 'unknown' : 'unknown');
+    console.log("📡 Connection downlink:", typeof navigator !== 'undefined' ? (navigator as any).connection?.downlink || 'unknown' : 'unknown');
+    console.log("🛡️ Secure context:", typeof window !== 'undefined' ? window.isSecureContext : undefined);
+    console.log("🖥️ Platform:", typeof navigator !== 'undefined' ? navigator.platform : 'unknown');
+    console.log("🌍 User Agent:", typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown');
     
     const wsHost = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
     

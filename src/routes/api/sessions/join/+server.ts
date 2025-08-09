@@ -39,10 +39,7 @@ export const POST: RequestHandler = async ({ request }) => {
       await broadcastToSession(session.id, {
         type: 'player_joined',
         sessionId: session.id,
-        data: {
-          player: player,
-          session: session // Include full session data so clients can update their state
-        },
+        data: player, // Send player data directly as the client expects it
         timestamp: new Date()
       });
     }
