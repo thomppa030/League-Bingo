@@ -206,7 +206,13 @@ class SessionManager {
       if (result.success && result.data) {
         currentSession.set(result.data.session);
         currentPlayer.set(result.data.player);
-        this.connectWebSocket(result.data.session.id);
+        
+        // Add delay for player joins to ensure session validation works
+        // The WebSocket server needs time to sync session data
+        console.log("🔄 Player joined session, waiting 1s before WebSocket connection...");
+        setTimeout(() => {
+          this.connectWebSocket(result.data.session.id);
+        }, 1000);
       }
 
       return result;

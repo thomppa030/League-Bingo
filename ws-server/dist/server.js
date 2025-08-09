@@ -145,11 +145,21 @@ server.on('upgrade', async (request, socket, head) => {
         const isValid = await sessionValidator.validateSession(sessionId, playerId);
         if (!isValid) {
             console.log(`[Upgrade] ❌ Session validation failed: sessionId=${sessionId}, playerId=${playerId}`);
-            socket.write('HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\n\r\nInvalid session or player\r\n');
-            socket.destroy();
-            return;
+            console.log(`[Upgrade] 🧹 Clearing session cache and retrying once...`);
+            // Clear cache and retry once (race condition fix)
+            sessionValidator.clearSessionCache(sessionId);
+            const retryValid = await sessionValidator.validateSession(sessionId, playerId);
+            if (!retryValid) {
+                console.log(`[Upgrade] ❌ Session validation failed on retry - rejecting connection`);
+                socket.write('HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\n\r\nInvalid session or player\r\n');
+                socket.destroy();
+                return;
+            }
+            console.log(`[Upgrade] ✅ Session validation passed on retry`);
         }
-        console.log(`[Upgrade] ✅ Session validation passed`);
+        else {
+            console.log(`[Upgrade] ✅ Session validation passed`);
+        }
     }
     catch (error) {
         console.log(`[Upgrade] ❌ Session validation error:`, error);
