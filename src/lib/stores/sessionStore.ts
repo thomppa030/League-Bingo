@@ -75,27 +75,59 @@ class SessionManager {
     console.log("🔌 Connection type:", (navigator as any).connection?.effectiveType || 'unknown');
     console.log("📡 Connection downlink:", (navigator as any).connection?.downlink || 'unknown');
     console.log("🛡️ Secure context:", window.isSecureContext);
+    console.log("🖥️ Platform:", navigator.platform);
+    console.log("🌍 User Agent:", navigator.userAgent);
+    
+    const wsHost = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
     
     // Test basic connectivity to WebSocket server
     try {
-      const wsHost = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
-      const testUrl = `${wsHost}/health`;
-      console.log("🏥 Testing connectivity to:", testUrl);
+      const healthUrl = `${wsHost}/health`;
+      console.log("🏥 Testing connectivity to:", healthUrl);
       
-      const response = await fetch(testUrl, { 
+      const healthResponse = await fetch(healthUrl, { 
         method: 'GET',
         mode: 'cors'
       });
       
-      if (response.ok) {
-        const data = await response.json();
+      if (healthResponse.ok) {
+        const data = await healthResponse.json();
         console.log("✅ Server health check passed:", data);
       } else {
-        console.warn("⚠️ Server health check failed:", response.status);
+        console.warn("⚠️ Server health check failed:", healthResponse.status);
       }
     } catch (error) {
-      console.error("❌ Cannot reach WebSocket server:", error);
-      console.error("🔍 This might indicate network/firewall issues");
+      console.error("❌ Cannot reach WebSocket server health endpoint:", error);
+    }
+
+    // Test detailed connection diagnostics
+    try {
+      const debugUrl = `${wsHost}/debug/connection`;
+      console.log("🔧 Testing debug endpoint:", debugUrl);
+      
+      const debugResponse = await fetch(debugUrl, { 
+        method: 'GET',
+        mode: 'cors'
+      });
+      
+      if (debugResponse.ok) {
+        const diagnostics = await debugResponse.json();
+        console.log("🔧 Server connection diagnostics:", diagnostics);
+        
+        // Check for potential issues
+        if (!diagnostics.client.connectionAllowed) {
+          console.error("❌ CORS Issue: Origin not allowed by server");
+        }
+        
+        if (diagnostics.client.ipConnectionCount >= diagnostics.server.maxConnectionsPerIp) {
+          console.warn("⚠️ Rate Limit: Too many connections from this IP");
+        }
+      } else {
+        console.warn("⚠️ Debug endpoint failed:", debugResponse.status);
+      }
+    } catch (error) {
+      console.error("❌ Cannot reach debug endpoint:", error);
+      console.error("🔍 This might indicate network/firewall issues or CORS restrictions");
     }
   }
 
@@ -770,23 +802,39 @@ class SessionManager {
     
     try {
       const testWs = new WebSocket(testUrl);
+      let connectionResult = "unknown";
       
       testWs.onopen = () => {
         console.log("✅ Test WebSocket connection successful!");
+        connectionResult = "success";
         testWs.close(1000, "Test completed");
       };
       
       testWs.onerror = (error) => {
         console.error("❌ Test WebSocket connection failed:", error);
+        connectionResult = "error";
       };
       
       testWs.onclose = (event) => {
         console.log("🔒 Test WebSocket closed:", event.code, event.reason);
+        
+        if (event.code === 1006 && connectionResult !== "success") {
+          console.error("🚨 ABNORMAL CLOSURE DETECTED (Code 1006)");
+          console.log("🔍 This usually indicates:");
+          console.log("  • Network connectivity issues");
+          console.log("  • Firewall blocking WebSocket connections");
+          console.log("  • Proxy server interference");
+          console.log("  • Antivirus software blocking connections");
+          console.log("  • ISP blocking WebSocket traffic");
+          console.log("  • CORS policy blocking the connection");
+          
+          this.suggestTroubleshootingSteps();
+        }
       };
       
       // Timeout after 10 seconds
       setTimeout(() => {
-        if (testWs.readyState !== WebSocket.OPEN) {
+        if (testWs.readyState !== WebSocket.OPEN && testWs.readyState !== WebSocket.CLOSED) {
           console.error("⏰ Test WebSocket connection timeout");
           testWs.close();
         }
@@ -795,6 +843,24 @@ class SessionManager {
     } catch (error) {
       console.error("🚨 Failed to create test WebSocket:", error);
     }
+  }
+
+  private suggestTroubleshootingSteps(): void {
+    console.log("🔧 Troubleshooting Steps for Abnormal Closure:");
+    console.log("1. 🛡️ Check firewall settings - allow outbound connections on port 443/80");
+    console.log("2. 🦠 Temporarily disable antivirus/security software");
+    console.log("3. 🌐 Try from a different network (mobile hotspot)");
+    console.log("4. 🔒 Check if corporate proxy is blocking WebSocket connections");
+    console.log("5. 🌍 Try from a different browser or incognito mode");
+    console.log("6. 📱 Test from mobile device on same network");
+    console.log("7. 🔧 Contact network administrator about WebSocket policies");
+    
+    // Test if it's a browser-specific issue
+    console.log("🌐 Browser Info:");
+    console.log("  • User Agent:", navigator.userAgent);
+    console.log("  • Platform:", navigator.platform);
+    console.log("  • WebSocket Support:", 'WebSocket' in window);
+    console.log("  • Online Status:", navigator.onLine);
   }
 }
 

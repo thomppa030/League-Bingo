@@ -12,7 +12,7 @@ const connectionManager = new ConnectionManager();
 const sessionValidator = new SessionValidator();
 const messageHandler = new MessageHandler(connectionManager, sessionValidator);
 const rateLimiter = new RateLimiter();
-// Create HTTP server
+// Create HTTP server with error handling
 const server = http.createServer((req, res) => {
     // Health check endpoint
     if (req.url === '/health') {
@@ -22,6 +22,39 @@ const server = http.createServer((req, res) => {
             connections: connectionManager.getAllSessions().length,
             timestamp: new Date()
         }));
+        return;
+    }
+    // Debug endpoint for connection diagnostics
+    if (req.url === '/debug/connection' && req.method === 'GET') {
+        const ip = req.headers['x-forwarded-for'] ||
+            req.socket.remoteAddress ||
+            'unknown';
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        const origin = req.headers.origin;
+        const diagnostics = {
+            server: {
+                port: config.port,
+                environment: config.nodeEnv,
+                corsOrigins: config.cors.allowedOrigins,
+                maxConnectionsPerIp: config.security.maxConnectionsPerIp
+            },
+            client: {
+                ip,
+                userAgent,
+                origin,
+                headers: req.headers,
+                connectionAllowed: !origin || config.cors.allowedOrigins.includes(origin),
+                ipConnectionCount: 0 // TODO: get from connection manager
+            },
+            timestamp: new Date()
+        };
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': origin || '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        res.end(JSON.stringify(diagnostics, null, 2));
         return;
     }
     // Webhook endpoint for broadcasts
@@ -67,37 +100,76 @@ const wss = new WebSocketServer({ noServer: true });
 // Handle WebSocket upgrade
 server.on('upgrade', async (request, socket, head) => {
     const origin = request.headers.origin;
-    // Check CORS
-    if (origin && !config.cors.allowedOrigins.includes(origin)) {
-        socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
-        socket.destroy();
-        return;
-    }
-    // Parse URL
-    const url = new URL(request.url, `http://${request.headers.host}`);
-    const sessionId = url.searchParams.get('sessionId');
-    const playerId = url.searchParams.get('playerId');
-    // Validate required parameters
-    if (!sessionId || !playerId) {
-        socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
-        socket.destroy();
-        return;
-    }
+    const userAgent = request.headers['user-agent'] || 'unknown';
     // Get client IP
     const ip = request.headers['x-forwarded-for'] ||
         request.socket.remoteAddress ||
         'unknown';
-    // Validate session and player
-    const isValid = await sessionValidator.validateSession(sessionId, playerId);
-    if (!isValid) {
-        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+    console.log(`[Upgrade] WebSocket upgrade request from ${ip}:`);
+    console.log(`  Origin: ${origin || 'none'}`);
+    console.log(`  User-Agent: ${userAgent}`);
+    console.log(`  URL: ${request.url}`);
+    console.log(`  Headers:`, Object.keys(request.headers));
+    // Check CORS with detailed logging
+    if (origin && !config.cors.allowedOrigins.includes(origin)) {
+        console.log(`[Upgrade] ❌ CORS rejection: Origin "${origin}" not in allowed origins:`, config.cors.allowedOrigins);
+        socket.write('HTTP/1.1 403 Forbidden\r\nContent-Type: text/plain\r\n\r\nCORS: Origin not allowed\r\n');
         socket.destroy();
         return;
     }
-    // Accept WebSocket connection
-    wss.handleUpgrade(request, socket, head, (ws) => {
-        wss.emit('connection', ws, sessionId, playerId, ip);
-    });
+    // Parse URL with error handling
+    let url;
+    try {
+        url = new URL(request.url, `http://${request.headers.host}`);
+    }
+    catch (error) {
+        console.log(`[Upgrade] ❌ Invalid URL: ${request.url}`, error);
+        socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nInvalid URL format\r\n');
+        socket.destroy();
+        return;
+    }
+    const sessionId = url.searchParams.get('sessionId');
+    const playerId = url.searchParams.get('playerId');
+    console.log(`  SessionId: ${sessionId}`);
+    console.log(`  PlayerId: ${playerId}`);
+    // Validate required parameters
+    if (!sessionId || !playerId) {
+        console.log(`[Upgrade] ❌ Missing parameters: sessionId=${sessionId}, playerId=${playerId}`);
+        socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nMissing sessionId or playerId parameters\r\n');
+        socket.destroy();
+        return;
+    }
+    // Validate session and player with detailed error handling
+    try {
+        console.log(`[Upgrade] 🔍 Validating session ${sessionId} for player ${playerId}...`);
+        const isValid = await sessionValidator.validateSession(sessionId, playerId);
+        if (!isValid) {
+            console.log(`[Upgrade] ❌ Session validation failed: sessionId=${sessionId}, playerId=${playerId}`);
+            socket.write('HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\n\r\nInvalid session or player\r\n');
+            socket.destroy();
+            return;
+        }
+        console.log(`[Upgrade] ✅ Session validation passed`);
+    }
+    catch (error) {
+        console.log(`[Upgrade] ❌ Session validation error:`, error);
+        socket.write('HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nSession validation failed\r\n');
+        socket.destroy();
+        return;
+    }
+    // Accept WebSocket connection with error handling
+    try {
+        console.log(`[Upgrade] ✅ Accepting WebSocket connection...`);
+        wss.handleUpgrade(request, socket, head, (ws) => {
+            console.log(`[Upgrade] ✅ WebSocket upgrade successful, emitting connection event`);
+            wss.emit('connection', ws, sessionId, playerId, ip);
+        });
+    }
+    catch (error) {
+        console.error(`[Upgrade] ❌ WebSocket upgrade failed:`, error);
+        socket.write('HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nWebSocket upgrade failed\r\n');
+        socket.destroy();
+    }
 });
 // Handle new WebSocket connections
 wss.on('connection', (ws, sessionId, playerId, ip) => {
@@ -184,10 +256,25 @@ process.on('SIGTERM', () => {
         });
     });
 });
+// Add server error handling
+server.on('error', (error) => {
+    console.error('[Server] HTTP server error:', error);
+});
+server.on('clientError', (error, socket) => {
+    console.error('[Server] Client connection error:', error);
+    console.error('[Server] Client IP:', socket.remoteAddress || 'unknown');
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+});
+// Add WebSocket server error handling
+wss.on('error', (error) => {
+    console.error('[WSS] WebSocket server error:', error);
+});
 // Start server
 server.listen(config.port, () => {
     console.log(`[Server] WebSocket server running on port ${config.port}`);
     console.log(`[Server] Environment: ${config.nodeEnv}`);
     console.log(`[Server] CORS origins: ${config.cors.allowedOrigins.join(', ')}`);
+    console.log(`[Server] Max connections per IP: ${config.security.maxConnectionsPerIp}`);
+    console.log(`[Server] Rate limit: ${config.security.rateLimitMessagesPerMinute} messages/minute`);
 });
 //# sourceMappingURL=server.js.map
