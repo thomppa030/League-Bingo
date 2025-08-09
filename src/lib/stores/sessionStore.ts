@@ -62,6 +62,8 @@ class SessionManager {
     // WebSocket server URL - defaults to local development
     // In production, set VITE_WS_URL to your WebSocket server URL
     this.wsUrl = import.meta.env?.VITE_WS_URL || 'ws://localhost:8080';
+    console.log('WebSocket URL configured:', this.wsUrl);
+    console.log('Environment:', import.meta.env.MODE);
   }
 
   async restoreSession(): Promise<boolean> {

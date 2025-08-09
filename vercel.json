@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".vercel/output",
+  "framework": "sveltekit",
+  "env": {
+    "VITE_WS_URL": "wss://league-bingo-webservice-production.up.railway.app"
+  }
+}
