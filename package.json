@@ -12,7 +12,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"pg": "^8.13.1"
+		"pg": "^8.13.1",
+		"svelte-i18n": "^4.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^4.0.0",

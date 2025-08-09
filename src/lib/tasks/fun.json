@@ -1,0 +1,196 @@
+{
+  "general": [
+    {
+      "id": "f1",
+      "text": {
+        "en": "Dance After Kill",
+        "de": "Nach Kill tanzen"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f2",
+      "text": {
+        "en": "Flash Over Wall <100 HP",
+        "de": "Flash über Wand mit <100 HP"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f3",
+      "text": {
+        "en": "Mastery Emote After Outplay",
+        "de": "Mastery Emote nach Outplay"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f4",
+      "text": {
+        "en": "Kill While Walking Backward",
+        "de": "Kill beim Rückwärtslaufen"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f5",
+      "text": {
+        "en": "Type \"whoops\"",
+        "de": "\"Ups\" schreiben"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f6",
+      "text": {
+        "en": "Juke Enemy Into Their Team",
+        "de": "Gegner in sein Team locken"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f7",
+      "text": {
+        "en": "Compliment Enemy Play",
+        "de": "Gegnerischen Play loben"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f8",
+      "text": {
+        "en": "Survive with Exactly 1 HP",
+        "de": "Mit genau 1 HP überleben"
+      },
+      "category": "fun",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f9",
+      "text": {
+        "en": "Use Emote in Bush",
+        "de": "Emote im Busch verwenden"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f10",
+      "text": {
+        "en": "Bait Enemy Into Trap",
+        "de": "Gegner in Falle locken"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f11",
+      "text": {
+        "en": "Accidentally Kill Steal",
+        "de": "Versehentlich Kill stehlen"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f12",
+      "text": {
+        "en": "Get Killed by Minion",
+        "de": "Von Minion getötet werden"
+      },
+      "category": "fun",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f13",
+      "text": {
+        "en": "Land perfect skillshot on low HP enemy who recalls",
+        "de": "Perfekten Skillshot auf low HP Gegner landen der recallt"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f14",
+      "text": {
+        "en": "Kill enemy with minion block",
+        "de": "Gegner durch Minion Block töten"
+      },
+      "category": "fun",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f15",
+      "text": {
+        "en": "Get saved by Zhonyas with <10 HP",
+        "de": "Von Zhonyas mit <10 HP gerettet werden"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "f16",
+      "text": {
+        "en": "Predict enemy flash with skillshot",
+        "de": "Gegner Flash mit Skillshot vorhersagen"
+      },
+      "category": "fun",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    }
+  ]
+}

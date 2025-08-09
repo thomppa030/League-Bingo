@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "League Bingo",
+    "subtitle": "Multiplayer bingo for your League games",
+    "description": "Multiplayer bingo game for League of Legends"
+  },
+  "navigation": {
+    "startSession": "Start Session",
+    "viewPrototype": "View Prototype",
+    "createSession": "Create Session",
+    "joinSession": "Join Session",
+    "back": "Back",
+    "leave": "Leave",
+    "leaveGame": "Leave Game"
+  },
+  "session": {
+    "create": {
+      "title": "Create New Session",
+      "yourName": "Your Name",
+      "yourNamePlaceholder": "Enter your name",
+      "sessionName": "Session Name",
+      "sessionNamePlaceholder": "Enter session name",
+      "minPlayers": "Min Players",
+      "maxPlayers": "Max Players",
+      "players": "Players",
+      "allowLateJoin": "Allow players to join after game starts",
+      "requireGMConfirmation": "Require GM confirmation for completed squares",
+      "createButton": "Create Session"
+    },
+    "join": {
+      "title": "Join Session",
+      "sessionCode": "Session Code",
+      "sessionCodePlaceholder": "Enter 6-character code",
+      "yourName": "Your Name",
+      "yourNamePlaceholder": "Enter your name",
+      "preferredRole": "Preferred Role",
+      "joinButton": "Join Session"
+    },
+    "lobby": {
+      "code": "Code",
+      "playersTitle": "Players",
+      "ready": "Ready",
+      "notReady": "Not Ready",
+      "nextCategories": "Next: Choose Categories"
+    }
+  },
+  "roles": {
+    "top": "Top Lane",
+    "jungle": "Jungle",
+    "mid": "Mid Lane",
+    "adc": "ADC/Bot",
+    "support": "Support",
+    "noRole": "No Role Selected",
+    "unknown": "Unknown Role"
+  },
+  "categories": {
+    "title": "Choose Your Bingo Categories",
+    "description": "Select the types of challenges you're comfortable with. Your bingo card will only include squares from your selected categories.",
+    "performance": "Performance",
+    "social": "Social Interaction",
+    "inGameEvents": "In-Game Events",
+    "missions": "Missions",
+    "performanceDesc": "Skill-based challenges like getting pentakills, high CS, solo kills",
+    "socialDesc": "Chat interactions, teammate reactions, enemy behavior",
+    "eventsDesc": "Baron steals, teamfights, objectives, game outcomes",
+    "missionsDesc": "Time-based goals, specific achievements, conditional tasks",
+    "backToLobby": "Back to Lobby",
+    "confirmSelection": "Confirm Selection",
+    "generateStart": "Generate Cards & Start"
+  },
+  "game": {
+    "title": "Your Bingo Card",
+    "playing": "Playing",
+    "score": "Score",
+    "patterns": "Patterns",
+    "leaderboard": "Leaderboard",
+    "gameActions": "Game Actions",
+    "callBingo": "Call Bingo!",
+    "viewPatterns": "View Patterns",
+    "gameRules": "Game Rules",
+    "pendingClaims": "Pending Claims (GM)",
+    "recentActivity": "Recent Activity",
+    "gameStarted": "Game started with {count} players",
+    "cardsGenerated": "Cards generated successfully",
+    "noPendingClaims": "No pending claims",
+    "freeSpace": "FREE SPACE",
+    "points": "pt"
+  },
+  "claim": {
+    "title": "Claim Bingo Square",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "points": "Points",
+    "evidence": "Evidence or Description (Optional)",
+    "evidencePlaceholder": "Describe how you completed this challenge...",
+    "confirmationNote": "Your claim will be sent to the Game Master for verification.",
+    "immediateNote": "This square will be marked as completed immediately.",
+    "cancel": "Cancel",
+    "claimButton": "Claim Square",
+    "noConnection": "No Connection",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "connection": {
+    "connecting": "Connecting...",
+    "disconnected": "Disconnected"
+  },
+  "errors": {
+    "requiredFields": "Please fill in all required fields",
+    "createFailed": "Failed to create session",
+    "joinFailed": "Failed to join session",
+    "networkError": "Network error. Please try again.",
+    "categoryFailed": "Failed to move to category selection",
+    "readyFailed": "Failed to update ready status",
+    "categoriesUpdateFailed": "Failed to update categories",
+    "cardsFailed": "Failed to generate cards",
+    "startFailed": "Failed to start game",
+    "noPlayerData": "Cannot toggle ready: no player data"
+  },
+  "common": {
+    "loading": "Loading...",
+    "testing": "Testing",
+    "gm": "GM"
+  },
+  "prototype": {
+    "title": "Bingo Card Prototype",
+    "subtitle": "Generate your personalized 5x5 bingo card for testing",
+    "backHome": "← Back Home",
+    "createCard": "Create Your Bingo Card",
+    "playerName": "Player Name",
+    "playerNamePlaceholder": "Enter your name",
+    "chooseRole": "Choose Your Role",
+    "selectCategories": "Select Categories (Choose at least 3)",
+    "generateCard": "Generate Bingo Card",
+    "newCard": "New Card",
+    "bingoCard": "{name}'s Bingo Card",
+    "score": "Score",
+    "cardStats": "Card Statistics",
+    "totalSquares": "Total Squares",
+    "completed": "Completed",
+    "currentScore": "Current Score",
+    "roleSquares": "Role Squares",
+    "howToPlay": "How to Play",
+    "howToPlayText": [
+      "Click squares to mark them as completed",
+      "Center 3x3 squares are shared with your team",
+      "Outer squares are unique to you",
+      "Different colors = different categories",
+      "Dots show difficulty (green=easy, yellow=medium, red=hard)",
+      "Try to complete rows, columns, or diagonals!"
+    ],
+    "shareTest": "Share & Test",
+    "screenshotCard": "Screenshot Card",
+    "generateNewCard": "Generate New Card",
+    "teamSquare": "Team Square",
+    "categories": {
+      "performance": "Performance",
+      "social": "Social",
+      "fun": "Fun",
+      "events": "Events",
+      "missions": "Missions",
+      "chaos": "Chaos"
+    },
+    "categoryIcons": {
+      "performance": "🎯",
+      "social": "💬",
+      "fun": "🎪",
+      "events": "⚡",
+      "missions": "🎲",
+      "chaos": "🌪️"
+    }
+  }
+}

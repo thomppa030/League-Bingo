@@ -1,0 +1,175 @@
+{
+  "centerSquares": [
+    {
+      "id": "c4",
+      "text": {
+        "en": "Get Baron + Win Fight",
+        "de": "Baron holen + Kampf gewinnen"
+      },
+      "category": "events",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "c5",
+      "text": {
+        "en": "FREE SPACE",
+        "de": "FREIFELD"
+      },
+      "category": "events",
+      "difficulty": "easy",
+      "points": 0,
+      "roleSpecific": [],
+      "requiresConfirmation": false,
+      "completed": true
+    },
+    {
+      "id": "c6",
+      "text": {
+        "en": "Get 3+ Dragons",
+        "de": "3+ Drachen holen"
+      },
+      "category": "events",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "c7",
+      "text": {
+        "en": "Win Fight 4v5",
+        "de": "4v5 Kampf gewinnen"
+      },
+      "category": "events",
+      "difficulty": "hard",
+      "points": 30,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "c8",
+      "text": {
+        "en": "Destroy All Outer Towers",
+        "de": "Alle äußeren Türme zerstören"
+      },
+      "category": "events",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "c9",
+      "text": {
+        "en": "Comeback from 5+ Kill Deficit",
+        "de": "Comeback von 5+ Kill Rückstand"
+      },
+      "category": "events",
+      "difficulty": "hard",
+      "points": 35,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    }
+  ],
+  "general": [
+    {
+      "id": "e1",
+      "text": {
+        "en": "Get First Tower",
+        "de": "Ersten Turm holen"
+      },
+      "category": "events",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "e2",
+      "text": {
+        "en": "Participate in Baron Steal",
+        "de": "Bei Baron Steal teilnehmen"
+      },
+      "category": "events",
+      "difficulty": "hard",
+      "points": 30,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "e3",
+      "text": {
+        "en": "Get Elder Execute",
+        "de": "Elder Execute bekommen"
+      },
+      "category": "events",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "e4",
+      "text": {
+        "en": "Die in Enemy Fountain",
+        "de": "In gegnerischem Fountain sterben"
+      },
+      "category": "events",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "e5",
+      "text": {
+        "en": "Team Gets Aced",
+        "de": "Team wird komplett eliminiert"
+      },
+      "category": "events",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "e6",
+      "text": {
+        "en": "Win Teamfight 3v5",
+        "de": "Teamfight 3v5 gewinnen"
+      },
+      "category": "events",
+      "difficulty": "hard",
+      "points": 40,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "e7",
+      "text": {
+        "en": "Get Soul + Win Game",
+        "de": "Soul holen + Spiel gewinnen"
+      },
+      "category": "events",
+      "difficulty": "medium",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "e8",
+      "text": {
+        "en": "Steal Epic Monster",
+        "de": "Episches Monster stehlen"
+      },
+      "category": "events",
+      "difficulty": "hard",
+      "points": 35,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    }
+  ]
+}

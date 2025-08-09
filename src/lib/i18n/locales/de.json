@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "League Bingo",
+    "subtitle": "Multiplayer-Bingo für deine League-Spiele",
+    "description": "Multiplayer-Bingo-Spiel für League of Legends"
+  },
+  "navigation": {
+    "startSession": "Session starten",
+    "viewPrototype": "Prototyp anzeigen",
+    "createSession": "Session erstellen",
+    "joinSession": "Session beitreten",
+    "back": "Zurück",
+    "leave": "Verlassen",
+    "leaveGame": "Spiel verlassen"
+  },
+  "session": {
+    "create": {
+      "title": "Neue Session erstellen",
+      "yourName": "Dein Name",
+      "yourNamePlaceholder": "Gib deinen Namen ein",
+      "sessionName": "Session-Name",
+      "sessionNamePlaceholder": "Gib den Session-Namen ein",
+      "minPlayers": "Min. Spieler",
+      "maxPlayers": "Max. Spieler",
+      "players": "Spieler",
+      "allowLateJoin": "Spieler dürfen nach Spielstart beitreten",
+      "requireGMConfirmation": "GM-Bestätigung für abgeschlossene Felder erforderlich",
+      "createButton": "Session erstellen"
+    },
+    "join": {
+      "title": "Session beitreten",
+      "sessionCode": "Session-Code",
+      "sessionCodePlaceholder": "6-stelligen Code eingeben",
+      "yourName": "Dein Name",
+      "yourNamePlaceholder": "Gib deinen Namen ein",
+      "preferredRole": "Bevorzugte Rolle",
+      "joinButton": "Session beitreten"
+    },
+    "lobby": {
+      "code": "Code",
+      "playersTitle": "Spieler",
+      "ready": "Bereit",
+      "notReady": "Nicht bereit",
+      "nextCategories": "Weiter: Kategorien wählen"
+    }
+  },
+  "roles": {
+    "top": "Top Lane",
+    "jungle": "Jungle",
+    "mid": "Mid Lane",
+    "adc": "ADC/Bot",
+    "support": "Support",
+    "noRole": "Keine Rolle gewählt",
+    "unknown": "Unbekannte Rolle"
+  },
+  "categories": {
+    "title": "Wähle deine Bingo-Kategorien",
+    "description": "Wähle die Arten von Herausforderungen aus, mit denen du dich wohlfühlst. Deine Bingo-Karte enthält nur Felder aus deinen ausgewählten Kategorien.",
+    "performance": "Leistung",
+    "social": "Soziale Interaktion",
+    "inGameEvents": "Spiel-Events",
+    "missions": "Missionen",
+    "performanceDesc": "Skill-basierte Herausforderungen wie Pentakills, hohe CS, Solo-Kills",
+    "socialDesc": "Chat-Interaktionen, Teamkollegen-Reaktionen, Gegnerverhalten",
+    "eventsDesc": "Baron-Steals, Teamkämpfe, Ziele, Spielergebnisse",
+    "missionsDesc": "Zeitbasierte Ziele, spezifische Erfolge, bedingte Aufgaben",
+    "backToLobby": "Zurück zur Lobby",
+    "confirmSelection": "Auswahl bestätigen",
+    "generateStart": "Karten generieren & starten"
+  },
+  "game": {
+    "title": "Deine Bingo-Karte",
+    "playing": "Spielt",
+    "score": "Punkte",
+    "patterns": "Muster",
+    "leaderboard": "Bestenliste",
+    "gameActions": "Spiel-Aktionen",
+    "callBingo": "Bingo rufen!",
+    "viewPatterns": "Muster anzeigen",
+    "gameRules": "Spielregeln",
+    "pendingClaims": "Ausstehende Ansprüche (GM)",
+    "recentActivity": "Letzte Aktivität",
+    "gameStarted": "Spiel mit {count} Spielern gestartet",
+    "cardsGenerated": "Karten erfolgreich generiert",
+    "noPendingClaims": "Keine ausstehenden Ansprüche",
+    "freeSpace": "FREIFELD",
+    "points": "Pkt"
+  },
+  "claim": {
+    "title": "Bingo-Feld beanspruchen",
+    "category": "Kategorie",
+    "difficulty": "Schwierigkeit",
+    "points": "Punkte",
+    "evidence": "Beweis oder Beschreibung (Optional)",
+    "evidencePlaceholder": "Beschreibe, wie du diese Herausforderung abgeschlossen hast...",
+    "confirmationNote": "Dein Anspruch wird zur Überprüfung an den Spielleiter gesendet.",
+    "immediateNote": "Dieses Feld wird sofort als abgeschlossen markiert.",
+    "cancel": "Abbrechen",
+    "claimButton": "Feld beanspruchen",
+    "noConnection": "Keine Verbindung",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen"
+  },
+  "difficulty": {
+    "easy": "Leicht",
+    "medium": "Mittel",
+    "hard": "Schwer"
+  },
+  "connection": {
+    "connecting": "Verbinde...",
+    "disconnected": "Getrennt"
+  },
+  "errors": {
+    "requiredFields": "Bitte alle erforderlichen Felder ausfüllen",
+    "createFailed": "Session-Erstellung fehlgeschlagen",
+    "joinFailed": "Session-Beitritt fehlgeschlagen",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "categoryFailed": "Wechsel zur Kategorienauswahl fehlgeschlagen",
+    "readyFailed": "Bereitschaftsstatus-Update fehlgeschlagen",
+    "categoriesUpdateFailed": "Kategorien-Update fehlgeschlagen",
+    "cardsFailed": "Karten-Generierung fehlgeschlagen",
+    "startFailed": "Spielstart fehlgeschlagen",
+    "noPlayerData": "Bereitschaft kann nicht geändert werden: keine Spielerdaten"
+  },
+  "common": {
+    "loading": "Lädt...",
+    "testing": "Testen",
+    "gm": "SL"
+  },
+  "prototype": {
+    "title": "Bingo-Karten-Prototyp",
+    "subtitle": "Generiere deine personalisierte 5x5 Bingo-Karte zum Testen",
+    "backHome": "← Zur Startseite",
+    "createCard": "Erstelle deine Bingo-Karte",
+    "playerName": "Spielername",
+    "playerNamePlaceholder": "Gib deinen Namen ein",
+    "chooseRole": "Wähle deine Rolle",
+    "selectCategories": "Kategorien auswählen (Mindestens 3 wählen)",
+    "generateCard": "Bingo-Karte generieren",
+    "newCard": "Neue Karte",
+    "bingoCard": "{name}s Bingo-Karte",
+    "score": "Punkte",
+    "cardStats": "Karten-Statistiken",
+    "totalSquares": "Felder gesamt",
+    "completed": "Abgeschlossen",
+    "currentScore": "Aktuelle Punkte",
+    "roleSquares": "Rollen-Felder",
+    "howToPlay": "Spielanleitung",
+    "howToPlayText": [
+      "Klicke Felder an, um sie als abgeschlossen zu markieren",
+      "Die mittleren 3x3 Felder werden mit deinem Team geteilt",
+      "Die äußeren Felder sind nur für dich",
+      "Verschiedene Farben = verschiedene Kategorien",
+      "Punkte zeigen Schwierigkeit (grün=leicht, gelb=mittel, rot=schwer)",
+      "Versuche Reihen, Spalten oder Diagonalen zu vervollständigen!"
+    ],
+    "shareTest": "Teilen & Testen",
+    "screenshotCard": "Screenshot der Karte",
+    "generateNewCard": "Neue Karte generieren",
+    "teamSquare": "Team-Feld",
+    "categories": {
+      "performance": "Leistung",
+      "social": "Sozial",
+      "fun": "Spaß",
+      "events": "Events",
+      "missions": "Missionen",
+      "chaos": "Chaos"
+    },
+    "categoryIcons": {
+      "performance": "🎯",
+      "social": "💬",
+      "fun": "🎪",
+      "events": "⚡",
+      "missions": "🎲",
+      "chaos": "🌪️"
+    }
+  }
+}

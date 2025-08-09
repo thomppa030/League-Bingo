@@ -18,6 +18,7 @@
     type CreateSessionRequest,
     type JoinSessionRequest,
   } from "../types.js";
+  import { _ } from 'svelte-i18n';
 
   // Component state
   let currentView:
@@ -116,7 +117,7 @@
   // Session Management Functions
   async function createSession() {
     if (!createForm.gmName.trim() || !createForm.sessionName.trim()) {
-      error = "Please fill in all required fields";
+      error = $_('errors.requiredFields');
       return;
     }
 
@@ -142,10 +143,10 @@
       if (result.success) {
         currentView = "lobby";
       } else {
-        error = result.error?.message || "Failed to create session";
+        error = result.error?.message || $_('errors.createFailed');
       }
     } catch (err) {
-      error = "Network error. Please try again.";
+      error = $_('errors.networkError');
     } finally {
       loading = false;
     }
@@ -153,7 +154,7 @@
 
   async function joinSession() {
     if (!joinForm.code.trim() || !joinForm.playerName.trim()) {
-      error = "Please fill in all required fields";
+      error = $_('errors.requiredFields');
       return;
     }
 
@@ -172,10 +173,10 @@
       if (result.success) {
         currentView = "lobby";
       } else {
-        error = result.error?.message || "Failed to join session";
+        error = result.error?.message || $_('errors.joinFailed');
       }
     } catch (err) {
-      error = "Network error. Please try again.";
+      error = $_('errors.networkError');
     } finally {
       loading = false;
     }
@@ -197,7 +198,7 @@
       await sessionManager.updateSessionStatus("category_selection");
       // Navigation will happen automatically via reactive statement
     } catch (err) {
-      error = "Failed to move to category selection";
+      error = $_('errors.categoryFailed');
       console.error(err);
     } finally {
       loading = false;
@@ -206,7 +207,7 @@
 
   async function toggleReady() {
     if (!myPlayer) {
-      console.error("Cannot toggle ready: no player data");
+      console.error($_('errors.noPlayerData'));
       return;
     }
     
@@ -217,7 +218,7 @@
       console.log("Toggling ready status from", myPlayer.isReady, "to", !myPlayer.isReady);
       await sessionManager.updatePlayerReady(!myPlayer.isReady);
     } catch (err) {
-      error = "Failed to update ready status";
+      error = $_('errors.readyFailed');
       console.error("Toggle ready error:", err);
     } finally {
       loading = false;
@@ -252,7 +253,7 @@
         }
       }
     } catch (err) {
-      error = "Failed to update categories";
+      error = $_('errors.categoriesUpdateFailed');
       console.error(err);
     } finally {
       loading = false;
@@ -278,38 +279,38 @@
           await sessionManager.updateSessionStatus("playing");
           // Navigation happens automatically via reactive statement
         } else {
-          error = startResult.error?.message || "Failed to start game";
+          error = startResult.error?.message || $_('errors.startFailed');
         }
       } else {
-        error = result.error?.message || "Failed to generate cards";
+        error = result.error?.message || $_('errors.cardsFailed');
       }
     } catch (err) {
       console.error("[UI] Error in generateCardsAndStart:", err);
-      error = err instanceof Error ? err.message : "Failed to start game";
+      error = err instanceof Error ? err.message : $_('errors.startFailed');
     } finally {
       loading = false;
     }
   }
 
   function getRoleDisplayName(role: Role | undefined): string {
-    if (!role) return "No Role Selected";
+    if (!role) return $_('roles.noRole');
     
     const roleNames = {
-      [Role.TOP]: "Top Lane",
-      [Role.JUNGLE]: "Jungle",
-      [Role.MID]: "Mid Lane",
-      [Role.ADC]: "ADC/Bot",
-      [Role.SUPPORT]: "Support",
+      [Role.TOP]: $_('roles.top'),
+      [Role.JUNGLE]: $_('roles.jungle'),
+      [Role.MID]: $_('roles.mid'),
+      [Role.ADC]: $_('roles.adc'),
+      [Role.SUPPORT]: $_('roles.support'),
     };
-    return roleNames[role] || "Unknown Role";
+    return roleNames[role] || $_('roles.unknown');
   }
 
   function getCategoryDisplayName(category: Category): string {
     const categoryNames = {
-      [Category.PERFORMANCE]: "Performance",
-      [Category.SOCIAL]: "Social Interaction",
-      [Category.IN_GAME_EVENTS]: "In-Game Events",
-      [Category.MISSIONS]: "Missions",
+      [Category.PERFORMANCE]: $_('categories.performance'),
+      [Category.SOCIAL]: $_('categories.social'),
+      [Category.IN_GAME_EVENTS]: $_('categories.inGameEvents'),
+      [Category.MISSIONS]: $_('categories.missions'),
     };
     return categoryNames[category];
   }
@@ -415,7 +416,7 @@
     font-weight: var(--font-weight-medium);
   "
   >
-    {$connectionStatus === "connecting" ? "Connecting..." : "Disconnected"}
+    {$connectionStatus === "connecting" ? $_('connection.connecting') : $_('connection.disconnected')}
   </div>
 {/if}
 
@@ -462,7 +463,7 @@
       background-clip: text;
     "
     >
-      LoL Bingo
+      {$_('app.title')}
     </h1>
 
     <div style="display: flex; flex-direction: column; gap: var(--space-4);">
@@ -472,7 +473,7 @@
         on:click={() => (currentView = "create")}
         style="width: 100%;"
       >
-        Create Session
+        {$_('navigation.createSession')}
       </Button>
 
       <Button
@@ -481,7 +482,7 @@
         on:click={() => (currentView = "join")}
         style="width: 100%;"
       >
-        Join Session
+        {$_('navigation.joinSession')}
       </Button>
     </div>
   </div>
@@ -492,7 +493,7 @@
     <h2
       style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6);"
     >
-      Create New Session
+      {$_('session.create.title')}
     </h2>
 
     <div style="display: flex; flex-direction: column; gap: var(--space-4);">
@@ -505,12 +506,12 @@
           color: var(--color-foreground);
         "
         >
-          Your Name *
+          {$_('session.create.yourName')} *
         </label>
         <input
           type="text"
           bind:value={createForm.gmName}
-          placeholder="Enter your name"
+          placeholder={$_('session.create.yourNamePlaceholder')}
           style="
             width: 100%;
             padding: var(--space-3);
@@ -532,12 +533,12 @@
           color: var(--color-foreground);
         "
         >
-          Session Name *
+          {$_('session.create.sessionName')} *
         </label>
         <input
           type="text"
           bind:value={createForm.sessionName}
-          placeholder="Enter session name"
+          placeholder={$_('session.create.sessionNamePlaceholder')}
           style="
             width: 100%;
             padding: var(--space-3);
@@ -560,7 +561,7 @@
             color: var(--color-foreground);
           "
           >
-            Min Players
+            {$_('session.create.minPlayers')}
           </label>
           <select
             bind:value={createForm.minPlayers}
@@ -574,10 +575,10 @@
               font-size: var(--font-size-base);
             "
           >
-            <option value={1}>1 Player (Testing)</option>
-            <option value={2}>2 Players</option>
-            <option value={3}>3 Players</option>
-            <option value={4}>4 Players</option>
+            <option value={1}>1 {$_('session.create.players')} ({$_('common.testing')})</option>
+            <option value={2}>2 {$_('session.create.players')}</option>
+            <option value={3}>3 {$_('session.create.players')}</option>
+            <option value={4}>4 {$_('session.create.players')}</option>
           </select>
         </div>
 
@@ -590,7 +591,7 @@
             color: var(--color-foreground);
           "
           >
-            Max Players
+            {$_('session.create.maxPlayers')}
           </label>
           <select
             bind:value={createForm.maxPlayers}
@@ -604,10 +605,10 @@
               font-size: var(--font-size-base);
             "
           >
-            <option value={4}>4 Players</option>
-            <option value={6}>6 Players</option>
-            <option value={8}>8 Players</option>
-            <option value={10}>10 Players</option>
+            <option value={4}>4 {$_('session.create.players')}</option>
+            <option value={6}>6 {$_('session.create.players')}</option>
+            <option value={8}>8 {$_('session.create.players')}</option>
+            <option value={10}>10 {$_('session.create.players')}</option>
           </select>
         </div>
       </div>
@@ -630,7 +631,7 @@
               height: var(--space-4);
             "
           />
-          Allow players to join after game starts
+          {$_('session.create.allowLateJoin')}
         </label>
 
         <label
@@ -650,7 +651,7 @@
               height: var(--space-4);
             "
           />
-          Require GM confirmation for completed squares
+          {$_('session.create.requireGMConfirmation')}
         </label>
       </div>
 
@@ -658,7 +659,7 @@
         style="display: flex; gap: var(--space-3); margin-top: var(--space-4);"
       >
         <Button variant="secondary" on:click={() => (currentView = "home")}>
-          Back
+          {$_('navigation.back')}
         </Button>
         <Button
           variant="primary"
@@ -666,7 +667,7 @@
           on:click={createSession}
           style="flex: 1;"
         >
-          Create Session
+          {$_('session.create.createButton')}
         </Button>
       </div>
     </div>
@@ -678,7 +679,7 @@
     <h2
       style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6);"
     >
-      Join Session
+      {$_('session.join.title')}
     </h2>
 
     <div style="display: flex; flex-direction: column; gap: var(--space-4);">
@@ -691,12 +692,12 @@
           color: var(--color-foreground);
         "
         >
-          Session Code *
+          {$_('session.join.sessionCode')} *
         </label>
         <input
           type="text"
           bind:value={joinForm.code}
-          placeholder="Enter 6-character code"
+          placeholder={$_('session.join.sessionCodePlaceholder')}
           maxlength="6"
           style="
             width: 100%;
@@ -722,12 +723,12 @@
           color: var(--color-foreground);
         "
         >
-          Your Name *
+          {$_('session.join.yourName')} *
         </label>
         <input
           type="text"
           bind:value={joinForm.playerName}
-          placeholder="Enter your name"
+          placeholder={$_('session.join.yourNamePlaceholder')}
           style="
             width: 100%;
             padding: var(--space-3);
@@ -749,7 +750,7 @@
           color: var(--color-foreground);
         "
         >
-          Preferred Role
+          {$_('session.join.preferredRole')}
         </label>
         <select
           bind:value={joinForm.role}
@@ -773,7 +774,7 @@
         style="display: flex; gap: var(--space-3); margin-top: var(--space-4);"
       >
         <Button variant="secondary" on:click={() => (currentView = "home")}>
-          Back
+          {$_('navigation.back')}
         </Button>
         <Button
           variant="primary"
@@ -781,7 +782,7 @@
           on:click={joinSession}
           style="flex: 1;"
         >
-          Join Session
+          {$_('session.join.joinButton')}
         </Button>
       </div>
     </div>
@@ -805,14 +806,14 @@
         </h2>
         <div style="display: flex; align-items: center; gap: var(--space-4);">
           <Badge variant="primary" size="lg">
-            Code: {$currentSession.code}
+            {$_('session.lobby.code')}: {$currentSession.code}
           </Badge>
           <Badge variant="glass">
-            {$sessionPlayers.length}/{$currentSession.maxPlayers} Players
+            {$sessionPlayers.length}/{$currentSession.maxPlayers} {$_('session.create.players')}
           </Badge>
         </div>
       </div>
-      <Button variant="danger" size="sm" on:click={leaveSession}>Leave</Button>
+      <Button variant="danger" size="sm" on:click={leaveSession}>{$_('navigation.leave')}</Button>
     </div>
 
     <!-- Players List -->
@@ -820,7 +821,7 @@
       <h3
         style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
       >
-        Players
+        {$_('session.lobby.playersTitle')}
       </h3>
       <div style="display: grid; gap: var(--space-3);">
         {#each $sessionPlayers as player}
@@ -843,7 +844,7 @@
                 <div style="font-weight: var(--font-weight-medium);">
                   {player.name || "No Name"}
                   {#if player.isGM}
-                    <Badge variant="accent" size="sm">GM</Badge>
+                    <Badge variant="accent" size="sm">{$_('common.gm')}</Badge>
                   {/if}
                 </div>
                 <div
@@ -862,7 +863,7 @@
               style="display: flex; align-items: center; gap: var(--space-2);"
             >
               <Badge variant={player.isReady ? "success" : "warning"} size="sm">
-                {player.isReady ? "Ready" : "Not Ready"}
+                {player.isReady ? $_('session.lobby.ready') : $_('session.lobby.notReady')}
               </Badge>
               <div
                 style="
@@ -892,7 +893,7 @@
             disabled={loading}
             on:click={toggleReady}
           >
-            {myPlayer.isReady ? "Not Ready" : "Ready"}
+            {myPlayer.isReady ? $_('session.lobby.notReady') : $_('session.lobby.ready')}
           </Button>
         {/if}
       </div>
@@ -905,7 +906,7 @@
           {loading}
           on:click={moveToCategories}
         >
-          Next: Choose Categories
+          {$_('session.lobby.nextCategories')}
         </Button>
       {/if}
     </div>
@@ -917,14 +918,13 @@
     <h2
       style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6);"
     >
-      Choose Your Bingo Categories
+      {$_('categories.title')}
     </h2>
 
     <p
       style="color: var(--color-muted-foreground); margin-bottom: var(--space-6); line-height: var(--line-height-relaxed);"
     >
-      Select the types of challenges you're comfortable with. Your bingo card
-      will only include squares from your selected categories.
+      {$_('categories.description')}
     </p>
 
     <div
@@ -964,14 +964,13 @@
               style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);"
             >
               {#if category === Category.PERFORMANCE}
-                Skill-based challenges like getting pentakills, high CS, solo
-                kills
+                {$_('categories.performanceDesc')}
               {:else if category === Category.SOCIAL}
-                Chat interactions, teammate reactions, enemy behavior
+                {$_('categories.socialDesc')}
               {:else if category === Category.IN_GAME_EVENTS}
-                Baron steals, teamfights, objectives, game outcomes
+                {$_('categories.eventsDesc')}
               {:else if category === Category.MISSIONS}
-                Time-based goals, specific achievements, conditional tasks
+                {$_('categories.missionsDesc')}
               {/if}
             </div>
           </div>
@@ -981,7 +980,7 @@
 
     <div style="display: flex; justify-content: space-between;">
       <Button variant="secondary" on:click={() => (currentView = "lobby")}>
-        Back to Lobby
+        {$_('categories.backToLobby')}
       </Button>
       <Button
         variant="primary"
@@ -989,7 +988,7 @@
         {loading}
         on:click={updateCategories}
       >
-        {$isGM ? "Generate Cards & Start" : "Confirm Selection"}
+        {$isGM ? $_('categories.generateStart') : $_('categories.confirmSelection')}
       </Button>
     </div>
   </Card>
@@ -1009,16 +1008,16 @@
           >
             {$currentSession.name}
           </h1>
-          <Badge variant="success">Playing</Badge>
+          <Badge variant="success">{$_('game.playing')}</Badge>
         </div>
 
         <div style="display: flex; align-items: center; gap: var(--space-4);">
           <Badge variant="primary" size="md">Code: {$currentSession.code}</Badge>
           <Badge variant="accent" size="md">
-            Score: {myPlayer?.totalScore || 0}
+            {$_('game.score')}: {myPlayer?.totalScore || 0}
           </Badge>
           <Button variant="danger" size="sm" on:click={leaveSession}>
-            Leave Game
+            {$_('navigation.leaveGame')}
           </Button>
         </div>
       </div>
@@ -1052,12 +1051,12 @@
                   <h2
                     style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); margin: 0;"
                   >
-                    Your Bingo Card
+                    {$_('game.title')}
                   </h2>
                   <div style="display: flex; gap: var(--space-2);">
                     <Badge variant="glass" size="sm">{getRoleDisplayName(myPlayer.role)}</Badge>
                     <Badge variant="accent" size="sm">
-                      {playerCard.completedPatterns.length} Patterns
+                      {playerCard.completedPatterns.length} {$_('game.patterns')}
                     </Badge>
                   </div>
                 </div>
@@ -1146,7 +1145,7 @@
                               opacity: 0.8;
                             "
                           >
-                            {square.points}pt
+                            {square.points}{$_('game.points')}
                           </div>
                         {/if}
 
@@ -1182,7 +1181,7 @@
                       <div
                         style="width: var(--space-3); height: var(--space-3); background: var(--color-primary-500); border-radius: var(--radius-sm);"
                       ></div>
-                      <span style="font-size: var(--font-size-sm);">Performance</span>
+                      <span style="font-size: var(--font-size-sm);">{$_('categories.performance')}</span>
                     </div>
                     <div
                       style="display: flex; align-items: center; gap: var(--space-2);"
@@ -1190,7 +1189,7 @@
                       <div
                         style="width: var(--space-3); height: var(--space-3); background: var(--color-success-500); border-radius: var(--radius-sm);"
                       ></div>
-                      <span style="font-size: var(--font-size-sm);">Social</span>
+                      <span style="font-size: var(--font-size-sm);">{$_('categories.social')}</span>
                     </div>
                     <div
                       style="display: flex; align-items: center; gap: var(--space-2);"
@@ -1198,7 +1197,7 @@
                       <div
                         style="width: var(--space-3); height: var(--space-3); background: var(--color-accent-500); border-radius: var(--radius-sm);"
                       ></div>
-                      <span style="font-size: var(--font-size-sm);">Events</span>
+                      <span style="font-size: var(--font-size-sm);">{$_('categories.inGameEvents')}</span>
                     </div>
                     <div
                       style="display: flex; align-items: center; gap: var(--space-2);"
@@ -1206,7 +1205,7 @@
                       <div
                         style="width: var(--space-3); height: var(--space-3); background: var(--color-warning-500); border-radius: var(--radius-sm);"
                       ></div>
-                      <span style="font-size: var(--font-size-sm);">Missions</span>
+                      <span style="font-size: var(--font-size-sm);">{$_('categories.missions')}</span>
                     </div>
                   </div>
 
@@ -1217,7 +1216,7 @@
                       <div
                         style="width: var(--space-2); height: var(--space-2); background: var(--color-success-500); border-radius: var(--radius-full);"
                       ></div>
-                      <span style="font-size: var(--font-size-xs);">Easy</span>
+                      <span style="font-size: var(--font-size-xs);">{$_('difficulty.easy')}</span>
                     </div>
                     <div
                       style="display: flex; align-items: center; gap: var(--space-1);"
@@ -1225,7 +1224,7 @@
                       <div
                         style="width: var(--space-2); height: var(--space-2); background: var(--color-warning-500); border-radius: var(--radius-full);"
                       ></div>
-                      <span style="font-size: var(--font-size-xs);">Medium</span>
+                      <span style="font-size: var(--font-size-xs);">{$_('difficulty.medium')}</span>
                     </div>
                     <div
                       style="display: flex; align-items: center; gap: var(--space-1);"
@@ -1233,7 +1232,7 @@
                       <div
                         style="width: var(--space-2); height: var(--space-2); background: var(--color-danger-500); border-radius: var(--radius-full);"
                       ></div>
-                      <span style="font-size: var(--font-size-xs);">Hard</span>
+                      <span style="font-size: var(--font-size-xs);">{$_('difficulty.hard')}</span>
                     </div>
                   </div>
                 </div>
@@ -1251,7 +1250,7 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              Leaderboard
+              {$_('game.leaderboard')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-3);"
@@ -1284,7 +1283,7 @@
                       >{player.name}</span
                     >
                     {#if player.isGM}
-                      <Badge variant="accent" size="xs">GM</Badge>
+                      <Badge variant="accent" size="xs">{$_('common.gm')}</Badge>
                     {/if}
                   </div>
                   <div style="text-align: right;">
@@ -1292,7 +1291,7 @@
                       {player.totalScore}pt
                     </div>
                     <div style="font-size: var(--font-size-xs); opacity: 0.8;">
-                      {$currentSession.cards?.find(c => c.playerID === player.id)?.completedPatterns.length || 0} patterns
+                      {$currentSession.cards?.find(c => c.playerID === player.id)?.completedPatterns.length || 0} {$_('game.patterns')}
                     </div>
                   </div>
                 </div>
@@ -1305,19 +1304,19 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              Game Actions
+              {$_('game.gameActions')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-3);"
             >
               <Button variant="accent" size="md" style="width: 100%;">
-                Call Bingo!
+                {$_('game.callBingo')}
               </Button>
               <Button variant="secondary" size="md" style="width: 100%;">
-                View Patterns
+                {$_('game.viewPatterns')}
               </Button>
               <Button variant="glass" size="md" style="width: 100%;">
-                Game Rules
+                {$_('game.gameRules')}
               </Button>
             </div>
           </Card>
@@ -1328,7 +1327,7 @@
               <h3
                 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
               >
-                Pending Claims (GM)
+                {$_('game.pendingClaims')}
               </h3>
               <div
                 style="display: flex; flex-direction: column; gap: var(--space-3);"
@@ -1357,21 +1356,21 @@
                           size="sm"
                           on:click={() => sessionManager.confirmSquare(claim.playerId, claim.squareId)}
                         >
-                          Approve
+                          {$_('claim.approve')}
                         </Button>
                         <Button 
                           variant="danger" 
                           size="sm"
                           on:click={() => sessionManager.rejectSquare(claim.playerId, claim.squareId)}
                         >
-                          Reject
+                          {$_('claim.reject')}
                         </Button>
                       </div>
                     </div>
                   {/each}
                 {:else}
                   <div style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);">
-                    No pending claims
+                    {$_('game.noPendingClaims')}
                   </div>
                 {/if}
               </div>
@@ -1383,7 +1382,7 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              Recent Activity
+              {$_('game.recentActivity')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-2);"
@@ -1391,12 +1390,12 @@
               <div
                 style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);"
               >
-                Game started with {$sessionPlayers.length} players
+                {$_('game.gameStarted', { values: { count: $sessionPlayers.length } })}
               </div>
               <div
                 style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);"
               >
-                Cards generated successfully
+                {$_('game.cardsGenerated')}
               </div>
             </div>
           </Card>
@@ -1431,7 +1430,7 @@
       <h3
         style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-4);"
       >
-        Claim Bingo Square
+        {$_('claim.title')}
       </h3>
 
       <div
@@ -1452,9 +1451,9 @@
         <div
           style="display: flex; justify-content: center; gap: var(--space-4); font-size: var(--font-size-sm);"
         >
-          <span>Category: {claimingSquare.category}</span>
-          <span>Difficulty: {claimingSquare.difficulty}</span>
-          <span>Points: {claimingSquare.points}</span>
+          <span>{$_('claim.category')}: {claimingSquare.category}</span>
+          <span>{$_('claim.difficulty')}: {claimingSquare.difficulty}</span>
+          <span>{$_('claim.points')}: {claimingSquare.points}</span>
         </div>
       </div>
 
@@ -1468,11 +1467,11 @@
               color: var(--color-foreground);
             "
           >
-            Evidence or Description (Optional)
+            {$_('claim.evidence')}
           </label>
           <textarea
             bind:value={claimEvidence}
-            placeholder="Describe how you completed this challenge..."
+            placeholder={$_('claim.evidencePlaceholder')}
             style="
               width: 100%;
               padding: var(--space-3);
@@ -1492,21 +1491,21 @@
         style="color: var(--color-muted-foreground); margin-bottom: var(--space-6); line-height: var(--line-height-relaxed);"
       >
         {#if $currentSession?.settings?.requireGMConfirmation}
-          Your claim will be sent to the Game Master for verification.
+          {$_('claim.confirmationNote')}
         {:else}
-          This square will be marked as completed immediately.
+          {$_('claim.immediateNote')}
         {/if}
       </p>
 
       <div
         style="display: flex; gap: var(--space-3); justify-content: flex-end;"
       >
-        <Button variant="secondary" on:click={cancelSquareClaim}>Cancel</Button>
+        <Button variant="secondary" on:click={cancelSquareClaim}>{$_('claim.cancel')}</Button>
         <Button variant="primary" on:click={confirmSquareClaim}>
           {#if $connectionStatus !== "connected"}
-            No Connection
+            {$_('claim.noConnection')}
           {:else}
-            Claim Square
+            {$_('claim.claimButton')}
           {/if}
         </Button>
       </div>

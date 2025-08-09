@@ -1,0 +1,484 @@
+{
+  "general": [
+    {
+      "id": "so1",
+      "text": {
+        "en": "Enemy Types \"gg wp\"",
+        "de": "Gegner schreibt \"gg wp\""
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so2",
+      "text": {
+        "en": "Someone Says \"diff\"",
+        "de": "Jemand sagt \"diff\""
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so3",
+      "text": {
+        "en": "Get \"?\" Pinged",
+        "de": "\"?\" Ping bekommen"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so4",
+      "text": {
+        "en": "Enemy Rage Quits",
+        "de": "Gegner verlässt wütend"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so5",
+      "text": {
+        "en": "Someone Blames Lag",
+        "de": "Jemand beschuldigt Lag"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so6",
+      "text": {
+        "en": "Flash Into Wall",
+        "de": "Flash in die Wand"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so7",
+      "text": {
+        "en": "Die to Jungle Monster",
+        "de": "An Jungle-Monster sterben"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so8",
+      "text": {
+        "en": "Someone Types \"ff15\"",
+        "de": "Jemand schreibt \"ff15\""
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so9",
+      "text": {
+        "en": "Teammate Flame in Chat",
+        "de": "Teamkollege flamt im Chat"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so10",
+      "text": {
+        "en": "Enemy All-Chat BM",
+        "de": "Gegner macht BM im All-Chat"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so11",
+      "text": {
+        "en": "Someone Blames Jungler",
+        "de": "Jemand beschuldigt Jungler"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so12",
+      "text": {
+        "en": "Get Honored by Enemy",
+        "de": "Von Gegner geehrt werden"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so13",
+      "text": {
+        "en": "Type \"my bad\" after feeding",
+        "de": "\"Mein Fehler\" nach Feeden schreiben"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so14",
+      "text": {
+        "en": "Get called \"trash\" in all-chat",
+        "de": "Als \"Müll\" im All-Chat bezeichnet werden"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so15",
+      "text": {
+        "en": "Enemy types \"ez\" after killing you",
+        "de": "Gegner schreibt \"ez\" nachdem er dich tötet"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so16",
+      "text": {
+        "en": "Successfully bait enemy into typing \"?\"",
+        "de": "Gegner erfolgreich dazu bringen \"?\" zu schreiben"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so17",
+      "text": {
+        "en": "Make enemy rage quit with emotes",
+        "de": "Gegner mit Emotes zum Rage Quit bringen"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so18",
+      "text": {
+        "en": "Get spam pinged by your own team",
+        "de": "Von eigenem Team spam gepingt werden"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so19",
+      "text": {
+        "en": "Someone types \"gg go next\"",
+        "de": "Jemand schreibt \"gg go next\""
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so20",
+      "text": {
+        "en": "Successfully tilt enemy with mastery spam",
+        "de": "Gegner erfolgreich mit Mastery-Spam tilten"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so21",
+      "text": {
+        "en": "Get called \"lucky\" after outplay",
+        "de": "Als \"glücklich\" nach Outplay bezeichnet werden"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so22",
+      "text": {
+        "en": "Type \"jungle diff\" when winning",
+        "de": "\"Jungle diff\" beim Gewinnen schreiben"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so23",
+      "text": {
+        "en": "Make teammate laugh so hard they miss CS",
+        "de": "Teamkollegen so zum Lachen bringen dass er CS verpasst"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so24",
+      "text": {
+        "en": "Get entire team to type same thing in chat",
+        "de": "Ganzes Team dazu bringen das Gleiche im Chat zu schreiben"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so25",
+      "text": {
+        "en": "Convince team to all flash at same time for no reason",
+        "de": "Team überzeugen alle gleichzeitig grundlos zu flashen"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so26",
+      "text": {
+        "en": "Get team to coordinate dance party in enemy jungle",
+        "de": "Team zu koordinierter Tanzparty im gegnerischen Jungle bewegen"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so27",
+      "text": {
+        "en": "Make teammate spit out their drink laughing",
+        "de": "Teamkollegen zum Lachen bringen dass er sein Getränk ausspuckt"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so28",
+      "text": {
+        "en": "Get team to all buy same weird item together",
+        "de": "Team dazu bringen alle den gleichen komischen Gegenstand zu kaufen"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so29",
+      "text": {
+        "en": "Start impromptu strategy discussion mid-fight",
+        "de": "Spontane Strategiediskussion mitten im Kampf beginnen"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so30",
+      "text": {
+        "en": "Get teammate to accidentally reveal embarrassing story",
+        "de": "Teamkollegen dazu bringen versehentlich peinliche Geschichte zu erzählen"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so31",
+      "text": {
+        "en": "Convince team to invade while singing together",
+        "de": "Team überzeugen singend zu invaden"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so32",
+      "text": {
+        "en": "Get everyone to use same emote after team fight",
+        "de": "Alle dazu bringen das gleiche Emote nach Teamfight zu nutzen"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so33",
+      "text": {
+        "en": "Make teammate mess up combo by distracting them",
+        "de": "Teamkollegen Combo versauen lassen durch Ablenkung"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so34",
+      "text": {
+        "en": "Get team to coordinate perfect 5-man recall",
+        "de": "Team zu perfektem 5-Mann-Recall koordinieren"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so35",
+      "text": {
+        "en": "Start random topic that gets whole team discussing",
+        "de": "Zufälliges Thema beginnen worüber das ganze Team diskutiert"
+      },
+      "category": "social",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so36",
+      "text": {
+        "en": "Get teammate to accidentally admit they're not paying attention",
+        "de": "Teamkollegen dazu bringen versehentlich zuzugeben dass er nicht aufpasst"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so37",
+      "text": {
+        "en": "Convince team to build same boots for 'team unity'",
+        "de": "Team überzeugen die gleichen Schuhe für 'Team-Einheit' zu kaufen"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so38",
+      "text": {
+        "en": "Make someone forget what they were about to say mid-sentence",
+        "de": "Jemanden vergessen lassen was er mitten im Satz sagen wollte"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so39",
+      "text": {
+        "en": "Get team to all ward same bush at exact same time",
+        "de": "Team dazu bringen alle zur exakt gleichen Zeit den gleichen Bush zu warden"
+      },
+      "category": "social",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "so40",
+      "text": {
+        "en": "Successfully rickroll your team during loading screen",
+        "de": "Team erfolgreich während Ladebildschirm rickrollen"
+      },
+      "category": "social",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    }
+  ]
+}

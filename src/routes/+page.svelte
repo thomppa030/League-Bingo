@@ -1,24 +1,25 @@
 <script lang="ts">
   import Button from "$lib/components/Button.svelte";
+  import { _ } from 'svelte-i18n';
 </script>
 
 <svelte:head>
-  <title>League Bingo</title>
-  <meta name="description" content="Multiplayer bingo game for League of Legends" />
+  <title>{$_('app.title')}</title>
+  <meta name="description" content={$_('app.description')} />
 </svelte:head>
 
 <main class="container">
   <div class="content">
-    <h1 class="title">League Bingo</h1>
-    <p class="subtitle">Multiplayer bingo for your League games</p>
+    <h1 class="title">{$_('app.title')}</h1>
+    <p class="subtitle">{$_('app.subtitle')}</p>
     
     <div class="actions">
       <Button variant="primary" size="lg">
-        <a href="/app">Start Session</a>
+        <a href="/app">{$_('navigation.startSession')}</a>
       </Button>
       
       <Button variant="secondary" size="lg">
-        <a href="/prototype">View Prototype</a>
+        <a href="/prototype">{$_('navigation.viewPrototype')}</a>
       </Button>
     </div>
   </div>

@@ -6,6 +6,9 @@
 	import { sessionManager, currentSession, currentPlayer } from '$lib/stores/sessionStore';
 	import { persistenceManager } from '$lib/stores/persistenceStore';
 	import { browser } from '$app/environment';
+	import '../lib/i18n';
+	import { isLoading } from 'svelte-i18n';
+	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 	
 	let { children } = $props();
 	let hasRestored = false;
@@ -50,4 +53,26 @@
 	});
 </script>
 
-{@render children()}
+{#if $isLoading}
+  <div style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background);
+    z-index: 9999;
+  ">
+    <div style="font-size: var(--font-size-lg); color: var(--color-muted-foreground);">
+      Loading...
+    </div>
+  </div>
+{:else}
+  <div style="position: fixed; top: var(--space-4); right: var(--space-4); z-index: 1000;">
+    <LanguageSwitcher />
+  </div>
+  {@render children()}
+{/if}

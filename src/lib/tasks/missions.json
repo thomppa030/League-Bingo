@@ -1,0 +1,124 @@
+{
+  "general": [
+    {
+      "id": "mi1",
+      "text": {
+        "en": "Complete Full Build",
+        "de": "Vollständigen Build abschließen"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi2",
+      "text": {
+        "en": "Have 3000+ Gold at Once",
+        "de": "3000+ Gold auf einmal haben"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi3",
+      "text": {
+        "en": "Recall <50 HP",
+        "de": "Mit <50 HP recallen"
+      },
+      "category": "missions",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "mi4",
+      "text": {
+        "en": "Get Kill in First 90 Seconds",
+        "de": "Kill in ersten 90 Sekunden"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "mi5",
+      "text": {
+        "en": "Reach Level 18",
+        "de": "Level 18 erreichen"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi6",
+      "text": {
+        "en": "Buy 3+ Control Wards",
+        "de": "3+ Kontrollwards kaufen"
+      },
+      "category": "missions",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi7",
+      "text": {
+        "en": "Get First Item Before 10min",
+        "de": "Ersten Gegenstand vor 10min"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi8",
+      "text": {
+        "en": "Ward Enemy Jungle 5+ Times",
+        "de": "Gegnerischen Jungle 5+ Mal warden"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi9",
+      "text": {
+        "en": "Survive Lane Phase 0 Deaths",
+        "de": "Laning Phase ohne Tod überleben"
+      },
+      "category": "missions",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "mi10",
+      "text": {
+        "en": "Use All Summoner Spells",
+        "de": "Alle Beschwörerzauber verwenden"
+      },
+      "category": "missions",
+      "difficulty": "easy",
+      "points": 5,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    }
+  ]
+}

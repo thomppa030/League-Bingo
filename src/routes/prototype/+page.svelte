@@ -2,743 +2,14 @@
   import Button from "$lib/components/Button.svelte";
   import Card from "$lib/components/Card.svelte";
   import Badge from "$lib/components/Badge.svelte";
+  import { _, locale } from 'svelte-i18n';
+  import { taskLoader, type Role, type Category } from '$lib/services/TaskLoader';
 
-  // Types
-  type Role = "top" | "jungle" | "mid" | "adc" | "support";
-  type Category =
-    | "performance"
-    | "social"
-    | "events"
-    | "missions"
-    | "fun"
-    | "chaos";
-  type Difficulty = "easy" | "medium" | "hard";
+  // Import the BingoSquare type directly from TaskLoader
+  import type { BingoSquare } from '$lib/services/TaskLoader';
 
-  interface BingoSquare {
-    id: string;
-    text: string;
-    category: Category;
-    difficulty: Difficulty;
-    points: number;
-    roleSpecific: Role[];
-    requiresConfirmation: boolean;
-    completed?: boolean;
-  }
 
-  // Simplified square database for prototype
-  const centerSquares: BingoSquare[] = [
-    {
-      id: "c1",
-      text: "Team Gets First Blood",
-      category: "events",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "c2",
-      text: "Ace Enemy Team",
-      category: "events",
-      difficulty: "medium",
-      points: 25,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "c3",
-      text: "Win Under 25min",
-      category: "events",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "c4",
-      text: "Get Baron + Win Fight",
-      category: "events",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "c5",
-      text: "FREE SPACE",
-      category: "events",
-      difficulty: "easy",
-      points: 0,
-      roleSpecific: [],
-      requiresConfirmation: false,
-      completed: true,
-    },
-    {
-      id: "c6",
-      text: "Get 3+ Dragons",
-      category: "events",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "c7",
-      text: "Win Fight 4v5",
-      category: "events",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "c8",
-      text: "Destroy All Outer Towers",
-      category: "events",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "c9",
-      text: "Comeback from 5+ Kill Deficit",
-      category: "events",
-      difficulty: "hard",
-      points: 35,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-  ];
 
-  const roleSpecificSquares: BingoSquare[] = [
-    // Top Lane
-    {
-      id: "t1",
-      text: "Solo Kill in Lane",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["top"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "t2",
-      text: "Win 1v2 vs Gank",
-      category: "performance",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: ["top"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "t3",
-      text: "9+ CS/min at 15min",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["top"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "t4",
-      text: "TP Save Teammate",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["top"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "t5",
-      text: "Split Push Tower Solo",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["top"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "t6",
-      text: "Tank 15k+ Damage",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: ["top"],
-      requiresConfirmation: false,
-    },
-
-    // Jungle
-    {
-      id: "j1",
-      text: "Steal Baron/Dragon",
-      category: "performance",
-      difficulty: "hard",
-      points: 40,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "j2",
-      text: "4+ Successful Ganks",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "j3",
-      text: "Counter-Jungle + Kill",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "j4",
-      text: "Solo Dragon Pre-15min",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "j5",
-      text: "Herald for 2+ Plates",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "j6",
-      text: "Full Clear Under 4min",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: ["jungle"],
-      requiresConfirmation: false,
-    },
-
-    // Mid Lane
-    {
-      id: "m1",
-      text: "Roam for 3+ Assists",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["mid"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "m2",
-      text: "Solo Kill Pre-Level 6",
-      category: "performance",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: ["mid"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "m3",
-      text: "4+ Person Ultimate",
-      category: "performance",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: ["mid"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "m4",
-      text: "First to Level 6",
-      category: "performance",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: ["mid"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "m5",
-      text: "10+ CS/min at 20min",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: ["mid"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "m6",
-      text: "Kill Both Enemy Carries",
-      category: "performance",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: ["mid"],
-      requiresConfirmation: false,
-    },
-
-    // ADC
-    {
-      id: "a1",
-      text: "Get Pentakill",
-      category: "performance",
-      difficulty: "hard",
-      points: 50,
-      roleSpecific: ["adc"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "a2",
-      text: "45k+ Damage to Champions",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["adc"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "a3",
-      text: "10+ CS/min at 20min",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["adc"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "a4",
-      text: "Get Quadrakill",
-      category: "performance",
-      difficulty: "medium",
-      points: 30,
-      roleSpecific: ["adc"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "a5",
-      text: "Survive with <50 HP",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["adc"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "a6",
-      text: "300+ CS in Game",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: ["adc"],
-      requiresConfirmation: false,
-    },
-
-    // Support
-    {
-      id: "s1",
-      text: "Save Ally <50 HP",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["support"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "s2",
-      text: "25+ Assists",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["support"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "s3",
-      text: "Place 75+ Wards",
-      category: "performance",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: ["support"],
-      requiresConfirmation: false,
-    },
-    {
-      id: "s4",
-      text: "4+ Person CC",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: ["support"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "s5",
-      text: "Solo Kill Enemy Carry",
-      category: "performance",
-      difficulty: "hard",
-      points: 35,
-      roleSpecific: ["support"],
-      requiresConfirmation: true,
-    },
-    {
-      id: "s6",
-      text: "Tank 10k+ Damage",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: ["support"],
-      requiresConfirmation: false,
-    },
-  ];
-
-  const generalSquares: BingoSquare[] = [
-    // Performance
-    {
-      id: "p1",
-      text: "Get Triple Kill",
-      category: "performance",
-      difficulty: "medium",
-      points: 25,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "p2",
-      text: "Go Deathless",
-      category: "performance",
-      difficulty: "medium",
-      points: 25,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "p3",
-      text: "Get 12+ Kills",
-      category: "performance",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "p4",
-      text: "Get Double Kill",
-      category: "performance",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "p5",
-      text: "Win 1v1 Fight",
-      category: "performance",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "p6",
-      text: "Kill Streak 7+",
-      category: "performance",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-
-    // Social
-    {
-      id: "so1",
-      text: 'Enemy Types "gg wp"',
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so2",
-      text: 'Someone Says "diff"',
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so3",
-      text: 'Get "?" Pinged',
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so4",
-      text: "Enemy Rage Quits",
-      category: "social",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so5",
-      text: "Someone Blames Lag",
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so6",
-      text: "Flash Into Wall",
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so7",
-      text: "Die to Jungle Monster",
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "so8",
-      text: 'Someone Types "ff15"',
-      category: "social",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-
-    // Fun
-    {
-      id: "f1",
-      text: "Dance After Kill",
-      category: "fun",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f2",
-      text: "Flash Over Wall <100 HP",
-      category: "fun",
-      difficulty: "medium",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f3",
-      text: "Mastery Emote After Outplay",
-      category: "fun",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f4",
-      text: "Kill While Walking Backward",
-      category: "fun",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f5",
-      text: 'Type "whoops"',
-      category: "fun",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f6",
-      text: "Juke Enemy Into Their Team",
-      category: "fun",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f7",
-      text: "Compliment Enemy Play",
-      category: "fun",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "f8",
-      text: "Survive with Exactly 1 HP",
-      category: "fun",
-      difficulty: "hard",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-
-    // Events
-    {
-      id: "e1",
-      text: "Get First Tower",
-      category: "events",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "e2",
-      text: "Participate in Baron Steal",
-      category: "events",
-      difficulty: "hard",
-      points: 30,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "e3",
-      text: "Get Elder Execute",
-      category: "events",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "e4",
-      text: "Die in Enemy Fountain",
-      category: "events",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "e5",
-      text: "Team Gets Aced",
-      category: "events",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-
-    // Chaos
-    {
-      id: "ch1",
-      text: "Game Goes 45+ Minutes",
-      category: "chaos",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "ch2",
-      text: "Someone DCs + Reconnects",
-      category: "chaos",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "ch3",
-      text: "10+ Kill Lead Swing",
-      category: "chaos",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "ch4",
-      text: "Both Teams Ace Each Other",
-      category: "chaos",
-      difficulty: "hard",
-      points: 25,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "ch5",
-      text: "Surrender at Exactly 20min",
-      category: "chaos",
-      difficulty: "easy",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-
-    // Missions
-    {
-      id: "mi1",
-      text: "Complete Full Build",
-      category: "missions",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "mi2",
-      text: "Have 3000+ Gold at Once",
-      category: "missions",
-      difficulty: "medium",
-      points: 10,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-    {
-      id: "mi3",
-      text: "Recall <50 HP",
-      category: "missions",
-      difficulty: "easy",
-      points: 5,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "mi4",
-      text: "Get Kill in First 90 Seconds",
-      category: "missions",
-      difficulty: "medium",
-      points: 20,
-      roleSpecific: [],
-      requiresConfirmation: true,
-    },
-    {
-      id: "mi5",
-      text: "Reach Level 18",
-      category: "missions",
-      difficulty: "medium",
-      points: 15,
-      roleSpecific: [],
-      requiresConfirmation: false,
-    },
-  ];
 
   // State
   let selectedRole: Role | null = null;
@@ -752,63 +23,23 @@
   let generatedCard: BingoSquare[][] | null = null;
   let totalScore = 0;
 
-  // Generate card function
+  // Reactive statement to force re-render when locale changes
+  $: currentLocale = $locale;
+
+  // Generate card function using TaskLoader
   function generateCard() {
     if (!selectedRole) return;
 
-    // Get role-specific squares (5 squares - 30% of 16)
-    const availableRoleSquares = roleSpecificSquares.filter((sq) =>
-      sq.roleSpecific.includes(selectedRole!),
-    );
-    const selectedRoleSquares = shuffleArray(availableRoleSquares).slice(0, 5);
-
-    // Get general squares filtered by categories (11 squares - 70% of 16)
-    const availableGeneralSquares = generalSquares.filter((sq) =>
-      selectedCategories.includes(sq.category),
-    );
-    const selectedGeneralSquares = shuffleArray(availableGeneralSquares).slice(
-      0,
-      11,
-    );
-
-    // Combine individual squares
-    const individualSquares = shuffleArray([
-      ...selectedRoleSquares,
-      ...selectedGeneralSquares,
-    ]);
-
-    // Create 5x5 grid
-    const card: BingoSquare[][] = [];
-    let individualIndex = 0;
-    let centerIndex = 0;
-
-    for (let row = 0; row < 5; row++) {
-      card[row] = [];
-      for (let col = 0; col < 5; col++) {
-        // Center 3x3 area (rows 1-3, cols 1-3)
-        if (row >= 1 && row <= 3 && col >= 1 && col <= 3) {
-          card[row][col] = { ...centerSquares[centerIndex] };
-          centerIndex++;
-        } else {
-          // Individual squares for outer ring
-          card[row][col] = { ...individualSquares[individualIndex] };
-          individualIndex++;
-        }
-      }
+    try {
+      const card = taskLoader.generateCard(selectedRole, selectedCategories);
+      console.log('Generated card:', card);
+      generatedCard = card;
+      calculateScore();
+    } catch (error) {
+      console.error('Error generating card:', error);
     }
-
-    generatedCard = card;
-    calculateScore();
   }
 
-  function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
 
   function toggleSquare(row: number, col: number) {
     if (!generatedCard) return;
@@ -838,7 +69,7 @@
     playerName = "";
   }
 
-  function getCategoryColor(category: Category): string {
+  function getCategoryColor(category: string): string {
     switch (category) {
       case "performance":
         return "var(--color-primary-500)";
@@ -857,7 +88,7 @@
     }
   }
 
-  function getDifficultyColor(difficulty: Difficulty): string {
+  function getDifficultyColor(difficulty: string): string {
     switch (difficulty) {
       case "easy":
         return "var(--color-success-500)";
@@ -889,7 +120,7 @@
 </script>
 
 <svelte:head>
-  <title>Bingo Card Prototype</title>
+  <title>{$_('prototype.title')}</title>
 </svelte:head>
 
 <div
@@ -909,17 +140,17 @@
         margin-bottom: var(--space-4);
       "
       >
-        Bingo Card Prototype
+        {$_('prototype.title')}
       </h1>
       <p
         style="color: var(--color-muted-foreground); font-size: var(--font-size-lg);"
       >
-        Generate your personalized 5x5 bingo card for testing
+        {$_('prototype.subtitle')}
       </p>
       <div style="margin-top: var(--space-4);">
         <Button variant="glass" size="sm">
           <a href="/" style="text-decoration: none; color: inherit;"
-            >← Back Home</a
+            >{$_('prototype.backHome')}</a
           >
         </Button>
       </div>
@@ -935,7 +166,7 @@
         <h2
           style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-6);"
         >
-          Create Your Bingo Card
+          {$_('prototype.createCard')}
         </h2>
 
         <!-- Player Name -->
@@ -947,12 +178,12 @@
             margin-bottom: var(--space-2);
           "
           >
-            Player Name
+            {$_('prototype.playerName')}
           </label>
           <input
             type="text"
             bind:value={playerName}
-            placeholder="Enter your name"
+            placeholder={$_('prototype.playerNamePlaceholder')}
             style="
               width: 100%;
               padding: var(--space-3);
@@ -973,7 +204,7 @@
             margin-bottom: var(--space-4);
           "
           >
-            Choose Your Role
+            {$_('prototype.chooseRole')}
           </label>
           <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: var(--space-3);"
@@ -1022,12 +253,12 @@
             margin-bottom: var(--space-4);
           "
           >
-            Select Categories (Choose at least 3)
+            {$_('prototype.selectCategories')}
           </label>
           <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-3);"
           >
-            {#each [{ id: "performance", name: "Performance", icon: "🎯" }, { id: "social", name: "Social", icon: "💬" }, { id: "fun", name: "Fun", icon: "🎪" }, { id: "events", name: "Events", icon: "⚡" }, { id: "missions", name: "Missions", icon: "🎲" }, { id: "chaos", name: "Chaos", icon: "🌪️" }] as category}
+            {#each taskLoader.getCategories() as category}
               <label
                 style="
                 display: flex;
@@ -1037,7 +268,7 @@
                 border: 1px solid var(--color-border);
                 border-radius: var(--radius-md);
                 cursor: pointer;
-                background: {selectedCategories.includes(category.id)
+                background: {selectedCategories.includes(category)
                   ? 'var(--glass-bg)'
                   : 'var(--color-surface)'};
               "
@@ -1045,12 +276,12 @@
                 <input
                   type="checkbox"
                   bind:group={selectedCategories}
-                  value={category.id}
+                  value={category}
                   style="width: var(--space-4); height: var(--space-4);"
                 />
-                <span>{category.icon}</span>
+                <span>{$_(`prototype.categoryIcons.${category}`)}</span>
                 <span style="font-weight: var(--font-weight-medium);"
-                  >{category.name}</span
+                  >{$_(`prototype.categories.${category}`)}</span
                 >
               </label>
             {/each}
@@ -1067,7 +298,7 @@
             !playerName.trim()}
           on:click={generateCard}
         >
-          Generate Bingo Card
+          {$_('prototype.generateCard')}
         </Button>
       </Card>
     {:else}
@@ -1084,7 +315,7 @@
               <h2
                 style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2);"
               >
-                {playerName}'s Bingo Card
+                {$_('prototype.bingoCard', { values: { name: playerName } })}
               </h2>
               <div
                 style="display: flex; gap: var(--space-3); align-items: center;"
@@ -1093,11 +324,11 @@
                   >{getRoleIcon(selectedRole)}
                   {selectedRole?.toUpperCase()}</Badge
                 >
-                <Badge variant="success">Score: {totalScore}</Badge>
+                <Badge variant="success">{$_('prototype.score')}: {totalScore}</Badge>
               </div>
             </div>
             <Button variant="secondary" size="sm" on:click={resetCard}>
-              New Card
+              {$_('prototype.newCard')}
             </Button>
           </div>
 
@@ -1168,7 +399,7 @@
                   <div
                     style="flex: 1; display: flex; align-items: center; justify-content: center;"
                   >
-                    {square.text}
+                    {taskLoader.getLocalizedText(square.text)}
                   </div>
 
                   <!-- Points -->
@@ -1183,7 +414,7 @@
                       opacity: 0.8;
                     "
                     >
-                      {square.points}pt
+                      {square.points}{$_('game.points')}
                     </div>
                   {/if}
 
@@ -1234,7 +465,7 @@
                 <div
                   style="width: var(--space-2); height: var(--space-2); background: var(--color-success-500); border-radius: var(--radius-full);"
                 ></div>
-                <span style="font-size: var(--font-size-xs);">Easy</span>
+                <span style="font-size: var(--font-size-xs);">{$_('difficulty.easy')}</span>
               </div>
               <div
                 style="display: flex; align-items: center; gap: var(--space-1);"
@@ -1242,7 +473,7 @@
                 <div
                   style="width: var(--space-2); height: var(--space-2); background: var(--color-warning-500); border-radius: var(--radius-full);"
                 ></div>
-                <span style="font-size: var(--font-size-xs);">Medium</span>
+                <span style="font-size: var(--font-size-xs);">{$_('difficulty.medium')}</span>
               </div>
               <div
                 style="display: flex; align-items: center; gap: var(--space-1);"
@@ -1250,14 +481,14 @@
                 <div
                   style="width: var(--space-2); height: var(--space-2); background: var(--color-danger-500); border-radius: var(--radius-full);"
                 ></div>
-                <span style="font-size: var(--font-size-xs);">Hard</span>
+                <span style="font-size: var(--font-size-xs);">{$_('difficulty.hard')}</span>
               </div>
             </div>
             <div
               style="display: flex; align-items: center; gap: var(--space-2);"
             >
               <span style="font-size: var(--font-size-xs);"
-                >👥 = Team Square</span
+                >👥 = {$_('prototype.teamSquare')}</span
               >
             </div>
           </div>
@@ -1272,17 +503,17 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              Card Statistics
+              {$_('prototype.cardStats')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-3);"
             >
               <div style="display: flex; justify-content: space-between;">
-                <span>Total Squares:</span>
+                <span>{$_('prototype.totalSquares')}:</span>
                 <Badge variant="default" size="sm">25</Badge>
               </div>
               <div style="display: flex; justify-content: space-between;">
-                <span>Completed:</span>
+                <span>{$_('prototype.completed')}:</span>
                 <Badge variant="success" size="sm">
                   {generatedCard
                     ? generatedCard.flat().filter((s) => s.completed).length
@@ -1290,11 +521,11 @@
                 </Badge>
               </div>
               <div style="display: flex; justify-content: space-between;">
-                <span>Current Score:</span>
-                <Badge variant="primary" size="sm">{totalScore}pts</Badge>
+                <span>{$_('prototype.currentScore')}:</span>
+                <Badge variant="primary" size="sm">{totalScore}{$_('game.points')}</Badge>
               </div>
               <div style="display: flex; justify-content: space-between;">
-                <span>Role Squares:</span>
+                <span>{$_('prototype.roleSquares')}:</span>
                 <Badge variant="accent" size="sm">
                   {generatedCard
                     ? generatedCard
@@ -1312,19 +543,14 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              How to Play
+              {$_('prototype.howToPlay')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--font-size-sm);"
             >
-              <p>• Click squares to mark them as completed</p>
-              <p>• Center 3x3 squares are shared with your team</p>
-              <p>• Outer squares are unique to you</p>
-              <p>• Different colors = different categories</p>
-              <p>
-                • Dots show difficulty (green=easy, yellow=medium, red=hard)
-              </p>
-              <p>• Try to complete rows, columns, or diagonals!</p>
+              {#each $_('prototype.howToPlayText') as instruction}
+                <p>• {instruction}</p>
+              {/each}
             </div>
           </Card>
 
@@ -1333,13 +559,13 @@
             <h3
               style="font-size: var(--font-size-lg); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);"
             >
-              Share & Test
+              {$_('prototype.shareTest')}
             </h3>
             <div
               style="display: flex; flex-direction: column; gap: var(--space-3);"
             >
               <Button variant="accent" size="md" style="width: 100%;">
-                Screenshot Card
+                {$_('prototype.screenshotCard')}
               </Button>
               <Button
                 variant="secondary"
@@ -1347,7 +573,7 @@
                 style="width: 100%;"
                 on:click={generateCard}
               >
-                Generate New Card
+                {$_('prototype.generateNewCard')}
               </Button>
             </div>
           </Card>

@@ -1,0 +1,220 @@
+{
+  "general": [
+    {
+      "id": "ch1",
+      "text": {
+        "en": "Game Goes 45+ Minutes",
+        "de": "Spiel geht 45+ Minuten"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "ch2",
+      "text": {
+        "en": "Someone DCs + Reconnects",
+        "de": "Jemand disconnected + reconnected"
+      },
+      "category": "chaos",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch3",
+      "text": {
+        "en": "10+ Kill Lead Swing",
+        "de": "10+ Kill Führung wechselt"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "ch4",
+      "text": {
+        "en": "Both Teams Ace Each Other",
+        "de": "Beide Teams eliminieren sich gegenseitig"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch5",
+      "text": {
+        "en": "Surrender at Exactly 20min",
+        "de": "Aufgabe bei genau 20min"
+      },
+      "category": "chaos",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "ch6",
+      "text": {
+        "en": "5+ People Fight for Scuttle",
+        "de": "5+ Leute kämpfen um Scuttle"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch7",
+      "text": {
+        "en": "All 10 Players Alive at 35min",
+        "de": "Alle 10 Spieler leben bei 35min"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 30,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch8",
+      "text": {
+        "en": "Game Decided by One Teamfight",
+        "de": "Spiel durch einen Teamfight entschieden"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch9",
+      "text": {
+        "en": "Someone Rage Quits Level 1",
+        "de": "Jemand verlässt wütend auf Level 1"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch10",
+      "text": {
+        "en": "Nexus Race (Both Below 50%)",
+        "de": "Nexus Race (Beide unter 50%)"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch11",
+      "text": {
+        "en": "Team gets wiped but wins anyway",
+        "de": "Team wird komplett eliminiert aber gewinnt trotzdem"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 30,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch12",
+      "text": {
+        "en": "Enemy steals baron AND dragon in same game",
+        "de": "Gegner stiehlt Baron UND Dragon im selben Spiel"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "ch13",
+      "text": {
+        "en": "Triple teleport play happens",
+        "de": "Triple Teleport Play passiert"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch14",
+      "text": {
+        "en": "Someone gets executed by jungle monster in late game",
+        "de": "Jemand wird von Jungle-Monster im Late Game executed"
+      },
+      "category": "chaos",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch15",
+      "text": {
+        "en": "Game decided by backdoor while teams fight",
+        "de": "Spiel durch Backdoor entschieden während Teams kämpfen"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch16",
+      "text": {
+        "en": "Both junglers die to same jungle camp",
+        "de": "Beide Jungler sterben an dem gleichen Jungle Camp"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ch17",
+      "text": {
+        "en": "Level 1 invade results in 3+ deaths",
+        "de": "Level 1 Invade führt zu 3+ Toden"
+      },
+      "category": "chaos",
+      "difficulty": "medium",
+      "points": 15,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "ch18",
+      "text": {
+        "en": "Elder dragon fight lasts 2+ minutes",
+        "de": "Elder Dragon Kampf dauert 2+ Minuten"
+      },
+      "category": "chaos",
+      "difficulty": "hard",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    }
+  ]
+}

@@ -1,0 +1,666 @@
+{
+  "centerSquares": [
+    {
+      "id": "c1",
+      "text": {
+        "en": "Team Gets First Blood",
+        "de": "Team holt First Blood"
+      },
+      "category": "performance",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "c2", 
+      "text": {
+        "en": "Ace Enemy Team",
+        "de": "Gegnerisches Team komplett eliminieren"
+      },
+      "category": "performance",
+      "difficulty": "medium",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "c3",
+      "text": {
+        "en": "Win Under 25min",
+        "de": "Gewinnen unter 25min"
+      },
+      "category": "performance", 
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    }
+  ],
+  "roleSpecific": {
+    "top": [
+      {
+        "id": "t1",
+        "text": {
+          "en": "Solo Kill in Lane",
+          "de": "Solo-Kill auf der Lane"
+        },
+        "category": "performance",
+        "difficulty": "medium", 
+        "points": 20,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t2",
+        "text": {
+          "en": "Win 1v2 vs Gank",
+          "de": "1v2 gegen Gank gewinnen"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t3",
+        "text": {
+          "en": "9+ CS/min at 15min",
+          "de": "9+ CS/min nach 15min"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "t4",
+        "text": {
+          "en": "TP Save Teammate",
+          "de": "Teamkollegen mit TP retten"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t5",
+        "text": {
+          "en": "Split Push Tower Solo",
+          "de": "Turm alleine splitpushen"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t6",
+        "text": {
+          "en": "Tank 15k+ Damage",
+          "de": "15k+ Schaden tanken"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 25,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "t7",
+        "text": {
+          "en": "Die to jungle monster as top laner",
+          "de": "Als Top Laner an Jungle-Monster sterben"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t8",
+        "text": {
+          "en": "Flame jungler for not ganking",
+          "de": "Jungler für fehlende Ganks anmachen"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "t9",
+        "text": {
+          "en": "Get dove 1v3 and somehow survive",
+          "de": "1v3 gedove werden und irgendwie überleben"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["top"],
+        "requiresConfirmation": true
+      }
+    ],
+    "jungle": [
+      {
+        "id": "j1",
+        "text": {
+          "en": "Steal Baron/Dragon",
+          "de": "Baron/Dragon stehlen"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 40,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "j2",
+        "text": {
+          "en": "4+ Successful Ganks",
+          "de": "4+ erfolgreiche Ganks"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "j3",
+        "text": {
+          "en": "Counter-Jungle + Kill",
+          "de": "Counter-Jungle + Kill"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "j4",
+        "text": {
+          "en": "Solo Dragon Pre-15min",
+          "de": "Dragon solo vor 15min"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "j5",
+        "text": {
+          "en": "Herald for 2+ Plates",
+          "de": "Herald für 2+ Platten"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "j6",
+        "text": {
+          "en": "Full Clear Under 4min",
+          "de": "Full Clear unter 4min"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 25,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "j7",
+        "text": {
+          "en": "Get blamed for everything by all lanes",
+          "de": "Von allen Lanes für alles beschuldigt werden"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "j8",
+        "text": {
+          "en": "Tax lane after failed gank",
+          "de": "Lane nach failed Gank besteuern"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "j9",
+        "text": {
+          "en": "Smite steal own teammate's kill",
+          "de": "Eigenen Teamkollegen-Kill mit Smite stehlen"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 10,
+        "roleSpecific": ["jungle"],
+        "requiresConfirmation": true
+      }
+    ],
+    "mid": [
+      {
+        "id": "m1",
+        "text": {
+          "en": "Roam for 3+ Assists",
+          "de": "Roamen für 3+ Assists"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "m2",
+        "text": {
+          "en": "Solo Kill Pre-Level 6",
+          "de": "Solo-Kill vor Level 6"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "m3",
+        "text": {
+          "en": "4+ Person Ultimate",
+          "de": "4+ Personen Ultimate"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "m4",
+        "text": {
+          "en": "First to Level 6",
+          "de": "Erster auf Level 6"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 10,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "m5",
+        "text": {
+          "en": "10+ CS/min at 20min",
+          "de": "10+ CS/min nach 20min"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 25,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "m6",
+        "text": {
+          "en": "Kill Both Enemy Carries",
+          "de": "Beide gegnerische Carries töten"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "m7",
+        "text": {
+          "en": "Miss every skillshot but still get the kill",
+          "de": "Jeden Skillshot verfehlen aber trotzdem Kill bekommen"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "m8",
+        "text": {
+          "en": "Get solo killed by enemy mid and type \"lag\"",
+          "de": "Solo von gegnerischem Mid getötet werden und \"lag\" schreiben"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "m9",
+        "text": {
+          "en": "Steal baron/dragon with regular ability",
+          "de": "Baron/Dragon mit normaler Fähigkeit stehlen"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 35,
+        "roleSpecific": ["mid"],
+        "requiresConfirmation": true
+      }
+    ],
+    "adc": [
+      {
+        "id": "a1",
+        "text": {
+          "en": "Get Pentakill",
+          "de": "Pentakill holen"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 50,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "a2",
+        "text": {
+          "en": "45k+ Damage to Champions",
+          "de": "45k+ Schaden an Champions"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "a3",
+        "text": {
+          "en": "10+ CS/min at 20min",
+          "de": "10+ CS/min nach 20min"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "a4",
+        "text": {
+          "en": "Get Quadrakill",
+          "de": "Quadrakill holen"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 30,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "a5",
+        "text": {
+          "en": "Survive with <50 HP",
+          "de": "Mit <50 HP überleben"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "a6",
+        "text": {
+          "en": "300+ CS in Game",
+          "de": "300+ CS im Spiel"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 25,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "a7",
+        "text": {
+          "en": "Blame support for your own positioning mistake",
+          "de": "Support für eigenen Positionsfehler beschuldigen"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "a8",
+        "text": {
+          "en": "Flash into enemy team and somehow live",
+          "de": "In Gegnerteam flashen und irgendwie überleben"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 30,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "a9",
+        "text": {
+          "en": "Get one-shot and type \"balanced\"",
+          "de": "One-Shot werden und \"balanced\" schreiben"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["adc"],
+        "requiresConfirmation": true
+      }
+    ],
+    "support": [
+      {
+        "id": "s1",
+        "text": {
+          "en": "Save Ally <50 HP",
+          "de": "Verbündeten mit <50 HP retten"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "s2",
+        "text": {
+          "en": "25+ Assists",
+          "de": "25+ Assists"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "s3",
+        "text": {
+          "en": "Place 75+ Wards",
+          "de": "75+ Wards setzen"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 15,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "s4",
+        "text": {
+          "en": "4+ Person CC",
+          "de": "4+ Personen CC"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 25,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "s5",
+        "text": {
+          "en": "Solo Kill Enemy Carry",
+          "de": "Gegnerischen Carry solo töten"
+        },
+        "category": "performance",
+        "difficulty": "hard",
+        "points": 35,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "s6",
+        "text": {
+          "en": "Tank 10k+ Damage",
+          "de": "10k+ Schaden tanken"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 20,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": false
+      },
+      {
+        "id": "s7",
+        "text": {
+          "en": "\"Accidentally\" KS your ADC with ignite",
+          "de": "\"Versehentlich\" ADC mit Ignite den Kill stehlen"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "s8",
+        "text": {
+          "en": "Leave ADC to die and type \"my bad\"",
+          "de": "ADC sterben lassen und \"mein Fehler\" schreiben"
+        },
+        "category": "performance",
+        "difficulty": "easy",
+        "points": 5,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      },
+      {
+        "id": "s9",
+        "text": {
+          "en": "Hook enemy into your team and lose the fight",
+          "de": "Gegner ins eigene Team hooken und den Kampf verlieren"
+        },
+        "category": "performance",
+        "difficulty": "medium",
+        "points": 10,
+        "roleSpecific": ["support"],
+        "requiresConfirmation": true
+      }
+    ]
+  },
+  "general": [
+    {
+      "id": "p1",
+      "text": {
+        "en": "Get Triple Kill",
+        "de": "Triple Kill holen"
+      },
+      "category": "performance",
+      "difficulty": "medium",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "p2",
+      "text": {
+        "en": "Go Deathless",
+        "de": "Ohne Tod spielen"
+      },
+      "category": "performance",
+      "difficulty": "medium",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "p3",
+      "text": {
+        "en": "Get 12+ Kills",
+        "de": "12+ Kills holen"
+      },
+      "category": "performance",
+      "difficulty": "medium",
+      "points": 20,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    },
+    {
+      "id": "p4",
+      "text": {
+        "en": "Get Double Kill",
+        "de": "Double Kill holen"
+      },
+      "category": "performance",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "p5",
+      "text": {
+        "en": "Win 1v1 Fight",
+        "de": "1v1 Kampf gewinnen"
+      },
+      "category": "performance",
+      "difficulty": "easy",
+      "points": 10,
+      "roleSpecific": [],
+      "requiresConfirmation": true
+    },
+    {
+      "id": "p6",
+      "text": {
+        "en": "Kill Streak 7+",
+        "de": "Killstreak 7+"
+      },
+      "category": "performance",
+      "difficulty": "hard",
+      "points": 25,
+      "roleSpecific": [],
+      "requiresConfirmation": false
+    }
+  ]
+}
