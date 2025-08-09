@@ -28,6 +28,32 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Webhook endpoint for broadcasts
+  if (req.url === '/webhook/broadcast' && req.method === 'POST') {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk.toString();
+    });
+    
+    req.on('end', () => {
+      try {
+        const { sessionId, message } = JSON.parse(body);
+        console.log(`[Webhook] Received broadcast request for session ${sessionId}:`, message.type);
+        
+        // Broadcast to all connections in the session
+        connectionManager.broadcastToSession(sessionId, message);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+      } catch (error) {
+        console.error('[Webhook] Error processing broadcast:', error);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid request' }));
+      }
+    });
+    return;
+  }
+
   // CORS headers for non-WebSocket requests
   const origin = req.headers.origin;
   if (origin && config.cors.allowedOrigins.includes(origin)) {

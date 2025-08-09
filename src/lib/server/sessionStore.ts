@@ -8,15 +8,48 @@ export const sessionsByCode = new Map<string, string>(); // code -> sessionId
 export const wsConnections = new Map<string, Set<any>>(); // Using any for now since WebSocket isn't available in Node
 
 // Helper to broadcast to all connections in a session
-export function broadcastToSession(sessionId: string, message: any) {
+export async function broadcastToSession(sessionId: string, message: any) {
+  console.log(`[Broadcast] Attempting to broadcast to session ${sessionId}:`, message.type);
+  
+  // First try direct WebSocket broadcast (for local development)
   const connections = wsConnections.get(sessionId);
-  if (connections) {
+  
+  if (connections && connections.size > 0) {
+    console.log(`[Broadcast] Found ${connections.size} direct connections for session ${sessionId}`);
     const messageStr = JSON.stringify(message);
     connections.forEach((ws: any) => {
       if (ws.readyState === 1) { // WebSocket.OPEN = 1
         ws.send(messageStr);
+        console.log(`[Broadcast] Message sent to direct connection`);
+      } else {
+        console.log(`[Broadcast] Skipping connection with readyState: ${ws.readyState}`);
       }
     });
+  } else {
+    console.log(`[Broadcast] No direct WebSocket connections found for session ${sessionId}`);
+    
+    // Try to notify the remote WebSocket server via HTTP webhook
+    try {
+      const wsServerUrl = 'https://league-bingo-webservice-production.up.railway.app';
+      const webhookResponse = await fetch(`${wsServerUrl}/webhook/broadcast`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          message
+        }),
+      });
+      
+      if (webhookResponse.ok) {
+        console.log(`[Broadcast] Successfully notified WebSocket server via webhook`);
+      } else {
+        console.log(`[Broadcast] Webhook failed: ${webhookResponse.status}`);
+      }
+    } catch (error) {
+      console.log(`[Broadcast] Webhook error:`, error);
+    }
   }
 }
 

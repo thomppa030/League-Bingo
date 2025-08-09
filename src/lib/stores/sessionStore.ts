@@ -186,6 +186,21 @@ class SessionManager {
     try {
       console.log(`Updating ready status to ${ready} for player ${player.id}`);
       
+      // Optimistically update local state immediately
+      const updatedPlayer = { ...player, isReady: ready };
+      currentPlayer.set(updatedPlayer);
+      
+      // Update the player in the session as well
+      currentSession.update(s => {
+        if (!s) return s;
+        return {
+          ...s,
+          players: s.players.map(p => 
+            p.id === player.id ? updatedPlayer : p
+          )
+        };
+      });
+      
       const response = await fetch(
         `/api/sessions/${session.id}/players/${player.id}/ready`,
         {
@@ -196,6 +211,17 @@ class SessionManager {
       );
       
       if (!response.ok) {
+        // Revert optimistic update on failure
+        currentPlayer.set(player);
+        currentSession.update(s => {
+          if (!s) return s;
+          return {
+            ...s,
+            players: s.players.map(p => 
+              p.id === player.id ? player : p
+            )
+          };
+        });
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
