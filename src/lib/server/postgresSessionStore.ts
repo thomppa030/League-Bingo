@@ -1,9 +1,16 @@
 // PostgreSQL session store for SvelteKit API endpoints
-import { postgresSessionStore } from "../../database/sessionStore.ts";
+import { postgresSessionStore } from "../../../database/sessionStore.ts";
 import type { Session } from "$lib/types";
 
 // Re-export the PostgreSQL session store for use in SvelteKit
 export { postgresSessionStore };
+
+// Initialize PostgreSQL store (for SvelteKit compatibility)
+export async function initializePostgreSQLStore(): Promise<void> {
+  // The database connection is initialized when first accessed
+  // This function exists for API compatibility but doesn't need to do anything
+  return Promise.resolve();
+}
 
 // Legacy compatibility - provide the same interface as the old in-memory store
 export const sessionStore = {
