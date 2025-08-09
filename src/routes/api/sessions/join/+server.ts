@@ -9,7 +9,7 @@ import type {
   ApiResponse,
   Player
 } from '$lib/types';
-import { sessions, sessionsByCode, broadcastToSession } from '$lib/server/sessionStore';
+import { sessions, sessionsByCode, sessionStore, broadcastToSession } from '$lib/server/sessionStore';
 
 function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -31,9 +31,16 @@ export const POST: RequestHandler = async ({ request }) => {
       }, { status: 400 });
     }
     
-    // Find session by code
-    const sessionId = sessionsByCode.get(body.code.trim().toUpperCase());
+    // Find session by code with detailed logging
+    const code = body.code.trim().toUpperCase();
+    console.log(`[Join] Looking for session with code: ${code}`);
+    
+    const sessionId = sessionsByCode.get(code);
     if (!sessionId) {
+      console.log(`[Join] Code ${code} not found in sessionsByCode map`);
+      console.log(`[Join] Available codes:`, Array.from(sessionsByCode.keys()));
+      console.log(`[Join] Session consistency check:`, sessionStore.verifySessionConsistency());
+      
       return json<ApiResponse>({
         success: false,
         error: {
@@ -44,8 +51,12 @@ export const POST: RequestHandler = async ({ request }) => {
       }, { status: 404 });
     }
     
-    const session = sessions.get(sessionId);
+    console.log(`[Join] Found sessionId ${sessionId} for code ${code}`);
+    const session = sessionStore.getSession(sessionId);
     if (!session) {
+      console.log(`[Join] Session ${sessionId} not found in sessions map`);
+      console.log(`[Join] Session consistency check:`, sessionStore.verifySessionConsistency());
+      
       return json<ApiResponse>({
         success: false,
         error: {
@@ -55,6 +66,8 @@ export const POST: RequestHandler = async ({ request }) => {
         timestamp: new Date()
       }, { status: 404 });
     }
+    
+    console.log(`[Join] Successfully found session ${sessionId} with ${session.players.length} players`);
     
     // Check if game already started and late join is disabled
     if (session.status !== 'setup' && !session.settings.allowLateJoin) {
@@ -114,6 +127,25 @@ export const POST: RequestHandler = async ({ request }) => {
     session.players.push(newPlayer);
     session.updatedAt = new Date();
     
+    // Update session in store with logging
+    sessionStore.joinSession(sessionId, session);
+    
+    // Verify player was added successfully
+    const updatedSession = sessionStore.getSession(sessionId);
+    if (!updatedSession || !updatedSession.players.find(p => p.id === playerId)) {
+      console.error('[Join] Failed to add player to session after join!');
+      return json<ApiResponse>({
+        success: false,
+        error: {
+          code: 'STORAGE_ERROR',
+          message: 'Failed to add player to session'
+        },
+        timestamp: new Date()
+      }, { status: 500 });
+    }
+    
+    console.log(`[Join] Player ${newPlayer.name} (${playerId}) successfully added to session ${sessionId}`);
+    
     // Broadcast player joined event via WebSocket
     broadcastToSession(sessionId, {
       type: 'player_joined',
@@ -124,7 +156,7 @@ export const POST: RequestHandler = async ({ request }) => {
     
     return json<ApiResponse<{ session: Session; player: Player }>>({
       success: true,
-      data: { session, player: newPlayer },
+      data: { session: updatedSession, player: newPlayer },
       timestamp: new Date()
     });
     

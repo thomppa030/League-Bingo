@@ -193,39 +193,91 @@ class SessionManager {
   async joinSession(
     request: JoinSessionRequest,
   ): Promise<ApiResponse<{ session: Session; player: Player }>> {
-    try {
-      const response = await fetch("/api/sessions/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(request),
-      });
-
-      const result: ApiResponse<{ session: Session; player: Player }> =
-        await response.json();
-
-      if (result.success && result.data) {
-        currentSession.set(result.data.session);
-        currentPlayer.set(result.data.player);
+    // Retry logic for session join
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`🔄 Attempting to join session (${attempt}/${maxRetries})...`);
         
-        // Add delay for player joins to ensure session validation works
-        // The WebSocket server needs time to sync session data
-        console.log("🔄 Player joined session, waiting 1s before WebSocket connection...");
-        setTimeout(() => {
-          this.connectWebSocket(result.data.session.id);
-        }, 1000);
-      }
+        const response = await fetch("/api/sessions/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(request),
+        });
 
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: "NETWORK_ERROR",
-          message: "Failed to join session",
-        },
-        timestamp: new Date(),
-      };
+        const result: ApiResponse<{ session: Session; player: Player }> =
+          await response.json();
+
+        if (result.success && result.data) {
+          console.log("✅ Successfully joined session");
+          currentSession.set(result.data.session);
+          currentPlayer.set(result.data.player);
+          
+          // Add delay for player joins to ensure session validation works
+          // The WebSocket server needs time to sync session data
+          console.log("🔄 Player joined session, waiting 1s before WebSocket connection...");
+          setTimeout(() => {
+            this.connectWebSocket(result.data.session.id);
+          }, 1000);
+          
+          return result;
+        }
+        
+        // If join failed, log the error and potentially retry
+        console.warn(`❌ Join attempt ${attempt} failed:`, result.error);
+        
+        // Don't retry if it's a validation error (duplicate name, session full, etc.)
+        if (result.error?.code && [
+          'DUPLICATE_PLAYER_NAME',
+          'SESSION_FULL', 
+          'GAME_ALREADY_STARTED',
+          'VALIDATION_ERROR'
+        ].includes(result.error.code)) {
+          console.log("🚫 Not retrying due to validation error");
+          return result;
+        }
+        
+        // If this is the last attempt, return the error
+        if (attempt === maxRetries) {
+          return result;
+        }
+        
+        // Wait before retrying
+        console.log(`⏳ Waiting ${retryDelay}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        
+      } catch (error) {
+        console.error(`❌ Network error on join attempt ${attempt}:`, error);
+        
+        // If this is the last attempt, return network error
+        if (attempt === maxRetries) {
+          return {
+            success: false,
+            error: {
+              code: "NETWORK_ERROR",
+              message: "Failed to join session after retries",
+            },
+            timestamp: new Date(),
+          };
+        }
+        
+        // Wait before retrying
+        console.log(`⏳ Waiting ${retryDelay}ms before network retry...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      }
     }
+    
+    // Should never reach here, but just in case
+    return {
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message: "Failed to join session",
+      },
+      timestamp: new Date(),
+    };
   }
 
   async leaveSession(): Promise<void> {

@@ -12,7 +12,7 @@ import type {
   Category
 } from '$lib/types';
 
-import { sessions, sessionsByCode } from '$lib/server/sessionStore';
+import { sessions, sessionsByCode, sessionStore } from '$lib/server/sessionStore';
 
 function generateSessionCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -88,9 +88,22 @@ export const POST: RequestHandler = async ({ request }) => {
       minPlayers: body.minPlayers ?? 1
     };
     
-    // Store session
-    sessions.set(sessionId, session);
-    sessionsByCode.set(code, sessionId);
+    // Store session using sessionStore for proper logging
+    sessionStore.createSession(session);
+    
+    // Verify the session was stored properly
+    const storedSession = sessionStore.getSession(sessionId);
+    if (!storedSession) {
+      console.error('[SessionCreation] Failed to store session after creation!');
+      return json<ApiResponse>({
+        success: false,
+        error: {
+          code: 'STORAGE_ERROR',
+          message: 'Session created but failed to store'
+        },
+        timestamp: new Date()
+      }, { status: 500 });
+    }
     
     return json<ApiResponse<Session>>({
       success: true,
