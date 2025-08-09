@@ -19,7 +19,12 @@ const rateLimiter = new RateLimiter();
 const server = http.createServer((req, res) => {
   // Health check endpoint
   if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.writeHead(200, { 
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
     res.end(JSON.stringify({
       status: 'healthy',
       connections: connectionManager.getAllSessions().length,
