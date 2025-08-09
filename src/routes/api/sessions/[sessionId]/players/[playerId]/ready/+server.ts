@@ -1,53 +1,37 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { ApiResponse } from '$lib/types';
-import { sessions, broadcastToSession } from '$lib/server/sessionStore';
+import { postgresSessionStore, initializePostgreSQLStore } from '$lib/server/postgresSessionStore';
 
 export const PUT: RequestHandler = async ({ params, request }) => {
   try {
+    // Initialize PostgreSQL store if not already done
+    await initializePostgreSQLStore();
+    
     const { sessionId, playerId } = params;
     const { ready } = await request.json();
     
-    const session = sessions.get(sessionId);
-    if (!session) {
+    // Validate input
+    if (typeof ready !== 'boolean') {
       return json<ApiResponse>({
         success: false,
         error: {
-          code: 'SESSION_NOT_FOUND',
-          message: 'Session not found'
+          code: 'VALIDATION_ERROR',
+          message: 'Ready status must be a boolean'
         },
         timestamp: new Date()
-      }, { status: 404 });
+      }, { status: 400 });
     }
     
-    const player = session.players.find(p => p.id === playerId);
-    if (!player) {
-      return json<ApiResponse>({
-        success: false,
-        error: {
-          code: 'PLAYER_NOT_FOUND',
-          message: 'Player not found'
-        },
-        timestamp: new Date()
-      }, { status: 404 });
+    // Use PostgreSQL session store to update ready status
+    const result = await postgresSessionStore.updatePlayerReady(sessionId, playerId, ready);
+    
+    if (!result.success) {
+      const status = result.error?.code === 'PLAYER_NOT_FOUND' ? 404 : 500;
+      return json<ApiResponse>(result, { status });
     }
     
-    // Update player ready status
-    player.isReady = ready;
-    session.updatedAt = new Date();
-    
-    // Broadcast player updated
-    broadcastToSession(sessionId, {
-      type: 'player_updated',
-      sessionId,
-      data: player,
-      timestamp: new Date()
-    });
-    
-    return json<ApiResponse>({
-      success: true,
-      timestamp: new Date()
-    });
+    return json<ApiResponse>(result);
     
   } catch (error) {
     console.error('Error updating ready status:', error);

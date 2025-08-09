@@ -1,24 +1,47 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { sessionStore } from '$lib/server/sessionStore';
-import type { SessionStatus } from '$lib/types';
+import type { SessionStatus, ApiResponse } from '$lib/types';
+import { postgresSessionStore, initializePostgreSQLStore } from '$lib/server/postgresSessionStore';
 
 export const PUT: RequestHandler = async ({ params, request }) => {
-  const { sessionId } = params;
-  const { status } = await request.json() as { status: SessionStatus };
+  try {
+    // Initialize PostgreSQL store if not already done
+    await initializePostgreSQLStore();
+    
+    const { sessionId } = params;
+    const { status } = await request.json() as { status: SessionStatus };
 
-  const session = sessionStore.getSession(sessionId);
-  
-  if (!session) {
-    return json({ error: 'Session not found' }, { status: 404 });
+    // Validate status
+    if (!status || !['setup', 'category_selection', 'playing', 'completed', 'cancelled'].includes(status)) {
+      return json<ApiResponse>({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid session status'
+        },
+        timestamp: new Date()
+      }, { status: 400 });
+    }
+
+    // Use PostgreSQL session store to update status
+    const result = await postgresSessionStore.updateSessionStatus(sessionId, status);
+    
+    if (!result.success) {
+      const httpStatus = result.error?.code === 'SESSION_NOT_FOUND' ? 404 : 500;
+      return json<ApiResponse>(result, { status: httpStatus });
+    }
+
+    return json<ApiResponse>(result);
+    
+  } catch (error) {
+    console.error('Error updating session status:', error);
+    return json<ApiResponse>({
+      success: false,
+      error: {
+        code: 'SERVER_ERROR',
+        message: 'Failed to update session status'
+      },
+      timestamp: new Date()
+    }, { status: 500 });
   }
-
-  // Update session status
-  session.status = status;
-  sessionStore.updateSession(sessionId, session);
-
-  // Broadcast status change to all connected clients via WebSocket
-  // This will be handled by the WebSocket server watching for session updates
-  
-  return json({ success: true, session });
 };

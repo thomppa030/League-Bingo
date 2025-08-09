@@ -1,40 +1,17 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { 
-  Role,
-  SessionStatus
-} from '$lib/types';
 import type { 
-  Session, 
   CreateSessionRequest, 
-  ApiResponse,
-  Player,
-  Category
+  ApiResponse
 } from '$lib/types';
 
-import { sessions, sessionsByCode, sessionStore } from '$lib/server/sessionStore';
-
-function generateSessionCode(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code: string;
-  
-  // Ensure unique code
-  do {
-    code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-  } while (sessionsByCode.has(code));
-  
-  return code;
-}
-
-function generateId(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
+import { postgresSessionStore, initializePostgreSQLStore } from '$lib/server/postgresSessionStore';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
+    // Initialize PostgreSQL store if not already done
+    await initializePostgreSQLStore();
+    
     const body: CreateSessionRequest = await request.json();
     
     // Validate request
@@ -49,67 +26,14 @@ export const POST: RequestHandler = async ({ request }) => {
       }, { status: 400 });
     }
     
-    // Create session
-    const sessionId = generateId('session');
-    const playerId = generateId('player');
-    const code = generateSessionCode();
+    // Use PostgreSQL session store to create session
+    const result = await postgresSessionStore.createSession(body);
     
-    const gmPlayer: Player = {
-      id: playerId,
-      sessionId,
-      name: body.gmName.trim(),
-      role: Role.MID, // Default role for GM
-      selectedCategories: [],
-      isGM: true,
-      isReady: true, // GM is always ready
-      joinedAt: new Date(),
-      connectionStatus: 'connected',
-      totalScore: 0
-    };
-    
-    const session: Session = {
-      id: sessionId,
-      code,
-      gmId: playerId,
-      name: body.sessionName.trim(),
-      status: SessionStatus.SETUP,
-      settings: {
-        allowLateJoin: body.settings?.allowLateJoin ?? true,
-        requireGMConfirmation: body.settings?.requireGMConfirmation ?? true,
-        enablePatternBonuses: body.settings?.enablePatternBonuses ?? true,
-        customRules: body.settings?.customRules ?? [],
-        timeLimit: body.settings?.timeLimit
-      },
-      players: [gmPlayer],
-      cards: [],
-      createAt: new Date(),
-      updatedAt: new Date(),
-      maxPlayers: body.maxPlayers ?? 8,
-      minPlayers: body.minPlayers ?? 1
-    };
-    
-    // Store session using sessionStore for proper logging
-    sessionStore.createSession(session);
-    
-    // Verify the session was stored properly
-    const storedSession = sessionStore.getSession(sessionId);
-    if (!storedSession) {
-      console.error('[SessionCreation] Failed to store session after creation!');
-      return json<ApiResponse>({
-        success: false,
-        error: {
-          code: 'STORAGE_ERROR',
-          message: 'Session created but failed to store'
-        },
-        timestamp: new Date()
-      }, { status: 500 });
+    if (!result.success) {
+      return json<ApiResponse>(result, { status: 500 });
     }
     
-    return json<ApiResponse<Session>>({
-      success: true,
-      data: session,
-      timestamp: new Date()
-    });
+    return json<ApiResponse>(result);
     
   } catch (error) {
     console.error('Error creating session:', error);
@@ -126,12 +50,15 @@ export const POST: RequestHandler = async ({ request }) => {
 
 export const GET: RequestHandler = async ({ url }) => {
   try {
+    // Initialize PostgreSQL store if not already done
+    await initializePostgreSQLStore();
+    
     const code = url.searchParams.get('code');
     
     if (code) {
       // Get session by code
-      const sessionId = sessionsByCode.get(code.toUpperCase());
-      if (!sessionId) {
+      const session = await postgresSessionStore.getSessionByCode(code.toUpperCase());
+      if (!session) {
         return json<ApiResponse>({
           success: false,
           error: {
@@ -142,29 +69,18 @@ export const GET: RequestHandler = async ({ url }) => {
         }, { status: 404 });
       }
       
-      const session = sessions.get(sessionId);
-      if (!session) {
-        return json<ApiResponse>({
-          success: false,
-          error: {
-            code: 'SESSION_NOT_FOUND',
-            message: 'Session not found'
-          },
-          timestamp: new Date()
-        }, { status: 404 });
-      }
-      
-      return json<ApiResponse<Session>>({
+      return json<ApiResponse>({
         success: true,
         data: session,
         timestamp: new Date()
       });
     }
     
-    // Return all sessions (for development)
-    return json<ApiResponse<Session[]>>({
+    // Return all active sessions (for development)
+    const activeSessions = await postgresSessionStore.getAllActiveSessions();
+    return json<ApiResponse>({
       success: true,
-      data: Array.from(sessions.values()),
+      data: activeSessions,
       timestamp: new Date()
     });
     

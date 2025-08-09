@@ -42,13 +42,15 @@ npm start            # Run production server
 
 ### Key Technologies
 - **Frontend**: SvelteKit, Svelte 5, TypeScript, Vite
+- **Database**: PostgreSQL with Deno 2 for persistence and real-time notifications
 - **Backend**: Node.js WebSocket server with TypeScript
-- **Real-time**: WebSockets for bidirectional communication
+- **Real-time**: WebSockets + PostgreSQL LISTEN/NOTIFY for bidirectional communication
 - **Data Source**: Google Sheets integration for challenge data
 
 ### Project Structure
 - `/src/routes/` - SvelteKit pages and API endpoints
 - `/src/lib/` - Shared components, stores, and utilities
+- `/database/` - PostgreSQL schema, models, and Deno 2 database layer
 - `/ws-server/` - Standalone WebSocket server
 - `GOOGLE_SHEETS_SETUP.md` - Instructions for Google Sheets CMS setup
 - `WEBSOCKETS.md` - WebSocket implementation details
@@ -61,12 +63,30 @@ The WebSocket server runs separately from the SvelteKit app:
 
 ### Environment Variables
 Main app uses `.env` with:
+- `DATABASE_URL` - PostgreSQL connection string
 - `VITE_WS_URL` - WebSocket server URL
+- Google Sheets configuration (API key, sheet ID, range)
 
 WebSocket server uses `.env` with:
 - `PORT` - Server port (default: 8080)
 - `API_URL` - SvelteKit API URL for validation
 - `ALLOWED_ORIGINS` - CORS allowed origins
+
+### Database Setup
+The application now uses PostgreSQL for persistent storage:
+
+1. **Install PostgreSQL** (local development)
+2. **Create database**: `createdb league_bingo`
+3. **Set environment variables** (copy `.env.example` to `.env`)
+4. **Run schema**: `psql $DATABASE_URL -f database/schema.sql`
+5. **Run migrations**: `deno run --allow-net --allow-env --allow-read database/migrate.ts`
+
+### Database Architecture
+- **Deno 2** for database operations with modern JavaScript/TypeScript
+- **Connection pooling** for efficient database usage
+- **ACID transactions** for data consistency
+- **PostgreSQL LISTEN/NOTIFY** for real-time updates
+- **Foreign key constraints** for data integrity
 
 ## Testing and Debugging
 
@@ -79,7 +99,21 @@ npm install -g wscat
 wscat -c "ws://localhost:8080?sessionId=XXX&playerId=YYY"
 ```
 
+### Database Commands
+```bash
+# Database migration and setup
+deno run --allow-net --allow-env --allow-read database/migrate.ts
+
+# Direct database access
+psql $DATABASE_URL
+
+# Load initial schema
+psql $DATABASE_URL -f database/schema.sql
+```
+
 ### Running Both Servers
 For full development, run both servers in separate terminals:
 1. Terminal 1: `npm run dev` (main app)
 2. Terminal 2: `cd ws-server && npm run dev` (WebSocket server)
+
+**Note**: Database operations use Deno 2, while the main app uses Node.js. This hybrid approach leverages Deno's modern features for database operations while maintaining compatibility with the existing SvelteKit/Node.js ecosystem.
