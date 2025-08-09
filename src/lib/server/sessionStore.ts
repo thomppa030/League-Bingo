@@ -19,3 +19,30 @@ export function broadcastToSession(sessionId: string, message: any) {
     });
   }
 }
+
+// Session store object with methods for managing sessions
+export const sessionStore = {
+  getSession(sessionId: string): Session | undefined {
+    return sessions.get(sessionId);
+  },
+  
+  updateSession(sessionId: string, session: Session): void {
+    sessions.set(sessionId, session);
+    
+    // Broadcast the update to all connected clients
+    broadcastToSession(sessionId, {
+      type: 'session_updated',
+      data: session,
+      timestamp: new Date()
+    });
+  },
+  
+  deleteSession(sessionId: string): void {
+    const session = sessions.get(sessionId);
+    if (session && session.code) {
+      sessionsByCode.delete(session.code);
+    }
+    sessions.delete(sessionId);
+    wsConnections.delete(sessionId);
+  }
+};
