@@ -674,17 +674,75 @@ class SessionManager {
     switch (message.type) {
       case "session_updated":
         console.log('Session updated via WebSocket:', message.data);
-        currentSession.set(message.data);
+        // Only update if the session data is newer or has more complete data
+        currentSession.update((s) => {
+          if (!s) return message.data;
+          
+          // Preserve existing players if the update doesn't have complete player data
+          const updatedSession = message.data;
+          if (updatedSession.players && updatedSession.players.length < s.players.length) {
+            console.log('WebSocket session update has fewer players, preserving existing players');
+            return {
+              ...updatedSession,
+              players: s.players
+            };
+          }
+          
+          return updatedSession;
+        });
         break;
+        
       case "player_joined":
         console.log('Player joined event received:', message.data);
+        console.log('Player data details:', {
+          id: message.data.id,
+          name: message.data.name,
+          role: message.data.role,
+          isGM: message.data.isGM,
+          isReady: message.data.isReady
+        });
+        
         currentSession.update((s) => {
           if (!s) return s;
-          console.log('Adding player to session:', message.data);
-          return {
+          
+          console.log('Current session players before update:', s.players.map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            isGM: p.isGM
+          })));
+          
+          // Check if player already exists to prevent duplication
+          const playerExists = s.players.some(p => p.id === message.data.id);
+          if (playerExists) {
+            console.log('Player already exists in session, updating instead of adding');
+            const updatedSession = {
+              ...s,
+              players: s.players.map(p => 
+                p.id === message.data.id ? message.data : p
+              )
+            };
+            console.log('Players after update:', updatedSession.players.map(p => ({
+              id: p.id,
+              name: p.name,
+              role: p.role,
+              isGM: p.isGM
+            })));
+            return updatedSession;
+          }
+          
+          console.log('Adding new player to session:', message.data);
+          const updatedSession = {
             ...s,
             players: [...s.players, message.data],
           };
+          console.log('Players after adding:', updatedSession.players.map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            isGM: p.isGM
+          })));
+          return updatedSession;
         });
         break;
       case "player_left":
@@ -699,20 +757,64 @@ class SessionManager {
 
       case "player_updated":
         console.log('Player updated event received:', message.data);
+        console.log('Updated player data details:', {
+          id: message.data.id,
+          name: message.data.name,
+          role: message.data.role,
+          isGM: message.data.isGM,
+          isReady: message.data.isReady
+        });
+        
         currentSession.update((s) => {
           if (!s) return s;
-          console.log('Updating player in session:', message.data);
-          return {
+          
+          console.log('Current session players before player update:', s.players.map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            isGM: p.isGM,
+            isReady: p.isReady
+          })));
+          
+          // Find if player exists
+          const playerExists = s.players.some(p => p.id === message.data.id);
+          if (!playerExists) {
+            console.log('Player not found for update, adding as new player:', message.data);
+            const updatedSession = {
+              ...s,
+              players: [...s.players, message.data]
+            };
+            console.log('Players after adding missing player:', updatedSession.players.map(p => ({
+              id: p.id,
+              name: p.name,
+              role: p.role,
+              isGM: p.isGM,
+              isReady: p.isReady
+            })));
+            return updatedSession;
+          }
+          
+          console.log('Updating existing player in session:', message.data);
+          const updatedSession = {
             ...s,
             players: s.players.map((p) =>
-              p.id === message.data.id ? message.data : p
+              p.id === message.data.id ? { ...p, ...message.data } : p
             ),
           };
+          console.log('Players after update:', updatedSession.players.map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            isGM: p.isGM,
+            isReady: p.isReady
+          })));
+          return updatedSession;
         });
 
         const currentPlayerData = get(currentPlayer);
         if (currentPlayerData && currentPlayerData.id === message.data.id) {
-          currentPlayer.set(message.data);
+          console.log('Updating current player data');
+          currentPlayer.set({ ...currentPlayerData, ...message.data });
         }
         break;
 
