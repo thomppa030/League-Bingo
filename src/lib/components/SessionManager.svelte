@@ -69,6 +69,21 @@
       currentView = "game";
     }
   }
+  
+  // Debug logging for session players
+  $: if (import.meta.env.DEV && $sessionPlayers) {
+    console.log('Session players updated:', $sessionPlayers);
+    console.log('Player count:', $sessionPlayers.length);
+    $sessionPlayers.forEach((player, index) => {
+      console.log(`Player ${index}:`, {
+        id: player.id,
+        name: player.name,
+        role: player.role,
+        isGM: player.isGM,
+        isReady: player.isReady
+      });
+    });
+  }
 
   onMount(async () => {
     // Check if session was restored from persistence
@@ -261,7 +276,9 @@
     }
   }
 
-  function getRoleDisplayName(role: Role): string {
+  function getRoleDisplayName(role: Role | undefined): string {
+    if (!role) return "No Role Selected";
+    
     const roleNames = {
       [Role.TOP]: "Top Lane",
       [Role.JUNGLE]: "Jungle",
@@ -269,7 +286,7 @@
       [Role.ADC]: "ADC/Bot",
       [Role.SUPPORT]: "Support",
     };
-    return roleNames[role];
+    return roleNames[role] || "Unknown Role";
   }
 
   function getCategoryDisplayName(category: Category): string {
@@ -313,7 +330,9 @@
     }
   }
 
-  function getRoleIcon(role: string): string {
+  function getRoleIcon(role: string | undefined): string {
+    if (!role) return "👤";
+    
     switch (role.toLowerCase()) {
       case "top":
         return "⚔️";
@@ -807,7 +826,7 @@
             >
               <div>
                 <div style="font-weight: var(--font-weight-medium);">
-                  {player.name}
+                  {player.name || "No Name"}
                   {#if player.isGM}
                     <Badge variant="accent" size="sm">GM</Badge>
                   {/if}
@@ -815,8 +834,13 @@
                 <div
                   style="font-size: var(--font-size-sm); color: var(--color-muted-foreground);"
                 >
-                  {getRoleDisplayName(player.role)}
+                  {getRoleDisplayName(player.role)} ({player.role || "undefined"})
                 </div>
+                {#if import.meta.env.DEV}
+                  <div style="font-size: var(--font-size-xs); color: var(--color-muted-foreground); opacity: 0.7;">
+                    Debug: ID={player.id}, Role={player.role}
+                  </div>
+                {/if}
               </div>
             </div>
             <div

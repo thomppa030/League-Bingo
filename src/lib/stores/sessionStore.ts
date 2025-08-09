@@ -475,8 +475,10 @@ class SessionManager {
         currentSession.set(message.data);
         break;
       case "player_joined":
+        console.log('Player joined event received:', message.data);
         currentSession.update((s) => {
           if (!s) return s;
+          console.log('Adding player to session:', message.data);
           return {
             ...s,
             players: [...s.players, message.data],
@@ -494,8 +496,10 @@ class SessionManager {
         break;
 
       case "player_updated":
+        console.log('Player updated event received:', message.data);
         currentSession.update((s) => {
           if (!s) return s;
+          console.log('Updating player in session:', message.data);
           return {
             ...s,
             players: s.players.map((p) =>
