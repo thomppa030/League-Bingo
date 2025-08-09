@@ -9,7 +9,7 @@ const STORAGE_KEYS = {
 
 export class PersistenceManager {
   private isAvailable(): boolean {
-    return browser && typeof window !== 'undefined' && window.localStorage;
+    return browser && typeof window !== 'undefined' && !!window.localStorage;
   }
 
   saveSession(session: Session | null): void {

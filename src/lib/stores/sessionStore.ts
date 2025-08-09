@@ -192,6 +192,33 @@ class SessionManager {
     }
   }
 
+  async updateSessionStatus(status: SessionStatus): Promise<void> {
+    const session = get(currentSession);
+    const player = get(currentPlayer);
+
+    if (!session || !player || !player.isGM) return;
+
+    try {
+      const response = await fetch(
+        `/api/sessions/${session.id}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        },
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to update session status');
+      }
+      
+      // The WebSocket will broadcast the status change to all players
+    } catch (error) {
+      console.error("Failed to update session status:", error);
+      throw error;
+    }
+  }
+
   async updatePlayerCategories(categories: string[]): Promise<void> {
     const session = get(currentSession);
     const player = get(currentPlayer);
@@ -442,6 +469,7 @@ class SessionManager {
 
     switch (message.type) {
       case "session_updated":
+        console.log('Session updated via WebSocket:', message.data);
         currentSession.set(message.data);
         break;
       case "player_joined":

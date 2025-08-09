@@ -58,6 +58,17 @@
   $: myPlayer = $currentPlayer;
   $: allPlayersReady =
     $sessionPlayers.length > 1 && $sessionPlayers.every((p) => p.isReady);
+  
+  // Auto-navigate based on session status changes (real-time updates)
+  $: if ($currentSession) {
+    if ($currentSession.status === "setup" && currentView !== "lobby") {
+      currentView = "lobby";
+    } else if ($currentSession.status === "category_selection" && currentView !== "categories") {
+      currentView = "categories";
+    } else if ($currentSession.status === "playing" && currentView !== "game") {
+      currentView = "game";
+    }
+  }
 
   onMount(async () => {
     // Check if session was restored from persistence
@@ -160,6 +171,24 @@
     currentView = "home";
   }
 
+  async function moveToCategories() {
+    if (!$currentSession || !$isGM) return;
+    
+    loading = true;
+    error = "";
+    
+    try {
+      // Update session status to category_selection for all players
+      await sessionManager.updateSessionStatus("category_selection");
+      // Navigation will happen automatically via reactive statement
+    } catch (err) {
+      error = "Failed to move to category selection";
+      console.error(err);
+    } finally {
+      loading = false;
+    }
+  }
+
   async function toggleReady() {
     if (!myPlayer) return;
     await sessionManager.updatePlayerReady(!myPlayer.isReady);
@@ -167,15 +196,36 @@
 
   async function updateCategories() {
     console.log("[UI] Updating categories:", selectedCategories);
-    await sessionManager.updatePlayerCategories(selectedCategories);
+    loading = true;
+    error = "";
     
-    // After updating categories, check if we should start the game
-    if ($isGM) {
-      console.log("[UI] GM detected, checking if should start game...");
-      console.log("[UI] All players ready:", allPlayersReady);
+    try {
+      await sessionManager.updatePlayerCategories(selectedCategories);
       
-      // For GM, automatically start after selecting categories
-      await generateCardsAndStart();
+      // After updating categories, check if we should start the game
+      if ($isGM) {
+        console.log("[UI] GM detected, checking if all players have selected categories...");
+        
+        // Wait a moment for the update to propagate
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Check if all players have selected categories
+        const allPlayersReady = $sessionPlayers.every((p) => 
+          p.categories && p.categories.length > 0
+        );
+        
+        console.log("[UI] All players have categories:", allPlayersReady);
+        
+        if (allPlayersReady) {
+          // For GM, automatically start after all players have selected categories
+          await generateCardsAndStart();
+        }
+      }
+    } catch (err) {
+      error = "Failed to update categories";
+      console.error(err);
+    } finally {
+      loading = false;
     }
   }
 
@@ -194,7 +244,9 @@
         console.log("[UI] Start game result:", startResult);
         
         if (startResult.success) {
-          currentView = "game";
+          // Update session status to playing, which will auto-navigate all players
+          await sessionManager.updateSessionStatus("playing");
+          // Navigation happens automatically via reactive statement
         } else {
           error = startResult.error?.message || "Failed to start game";
         }
@@ -810,7 +862,7 @@
           size="lg"
           disabled={!$canStartGame || loading}
           {loading}
-          on:click={() => (currentView = "categories")}
+          on:click={moveToCategories}
         >
           Next: Choose Categories
         </Button>
