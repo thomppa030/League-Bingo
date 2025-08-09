@@ -227,14 +227,9 @@ wss.on('connection', (ws: AuthenticatedWebSocket, sessionId: string, playerId: s
     timestamp: new Date()
   }));
 
-  // Notify others in session
-  connectionManager.broadcastToSession(sessionId, {
-    type: WSMessageType.PLAYER_JOINED,
-    sessionId,
-    playerId,
-    data: { playerId },
-    timestamp: new Date()
-  }, playerId);
+  // Note: Player joined notifications are now handled by the API via webhook
+  // to ensure complete player data (name, role) is included
+  console.log(`[WS] Player ${playerId} connected to session ${sessionId} - API will broadcast details`);
 
   // Set up heartbeat
   ws.isAlive = true;
