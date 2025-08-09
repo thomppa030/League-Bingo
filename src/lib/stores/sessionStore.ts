@@ -64,6 +64,39 @@ class SessionManager {
     this.wsUrl = import.meta.env?.VITE_WS_URL || 'ws://localhost:8080';
     console.log('WebSocket URL configured:', this.wsUrl);
     console.log('Environment:', import.meta.env.MODE);
+    
+    // Perform network diagnostics
+    this.performNetworkDiagnostics();
+  }
+
+  private async performNetworkDiagnostics(): Promise<void> {
+    console.log("🔍 Network Diagnostics:");
+    console.log("🌐 Navigator online:", navigator.onLine);
+    console.log("🔌 Connection type:", (navigator as any).connection?.effectiveType || 'unknown');
+    console.log("📡 Connection downlink:", (navigator as any).connection?.downlink || 'unknown');
+    console.log("🛡️ Secure context:", window.isSecureContext);
+    
+    // Test basic connectivity to WebSocket server
+    try {
+      const wsHost = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
+      const testUrl = `${wsHost}/health`;
+      console.log("🏥 Testing connectivity to:", testUrl);
+      
+      const response = await fetch(testUrl, { 
+        method: 'GET',
+        mode: 'cors'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("✅ Server health check passed:", data);
+      } else {
+        console.warn("⚠️ Server health check failed:", response.status);
+      }
+    } catch (error) {
+      console.error("❌ Cannot reach WebSocket server:", error);
+      console.error("🔍 This might indicate network/firewall issues");
+    }
   }
 
   async restoreSession(): Promise<boolean> {
@@ -453,11 +486,22 @@ class SessionManager {
       return;
     }
 
+    const connectionUrl = `${this.wsUrl}?sessionId=${sessionId}&playerId=${player.id}`;
+    console.log("🔌 Attempting WebSocket connection...");
+    console.log("📍 URL:", connectionUrl);
+    console.log("🌐 User Agent:", navigator.userAgent);
+    console.log("🖥️ Platform:", navigator.platform);
+    console.log("📶 Online status:", navigator.onLine);
+    console.log("🔒 Protocol:", location.protocol);
+    console.log("🌍 Origin:", location.origin);
+
     try {
-      const ws = new WebSocket(`${this.wsUrl}?sessionId=${sessionId}&playerId=${player.id}`);
+      const ws = new WebSocket(connectionUrl);
+      console.log("⏳ WebSocket created, waiting for connection...");
 
       ws.onopen = () => {
-        console.log("WebSocket connected");
+        console.log("✅ WebSocket connected successfully!");
+        console.log("🔗 Ready State:", ws.readyState);
         connectionStatus.set("connected");
         wsConnection.set(ws);
         this.reconnectedAttempts = 0;
@@ -472,15 +516,44 @@ class SessionManager {
         }
       };
 
-      ws.onclose = () => {
-        console.log("WebSocket disconnected");
+      ws.onclose = (event) => {
+        console.log("❌ WebSocket disconnected");
+        console.log("🔍 Close code:", event.code);
+        console.log("📝 Close reason:", event.reason);
+        console.log("🧹 Clean close:", event.wasClean);
+        
+        // Common close codes explanation
+        const closeReasons = {
+          1000: "Normal Closure",
+          1001: "Going Away", 
+          1002: "Protocol Error",
+          1003: "Unsupported Data",
+          1006: "Abnormal Closure (no close frame)",
+          1011: "Server Error",
+          1012: "Service Restart", 
+          1013: "Try Again Later",
+          1014: "Bad Gateway",
+          1015: "TLS Handshake Failure"
+        };
+        
+        console.log("📚 Code meaning:", closeReasons[event.code] || "Unknown");
+        
         connectionStatus.set("disconnected");
         wsConnection.set(null);
         this.attemptReconnect(sessionId);
       };
 
       ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        console.error("🚨 WebSocket error occurred:");
+        console.error("🔍 Error event:", error);
+        console.error("🔗 Ready State:", ws.readyState);
+        console.error("📍 URL:", connectionUrl);
+        
+        // Check if it might be a network issue
+        if (!navigator.onLine) {
+          console.error("🌐 Network appears to be offline!");
+        }
+        
         connectionStatus.set("disconnected");
       };
     } catch (error) {
@@ -685,9 +758,54 @@ class SessionManager {
   getPlayer(): Player | null {
     return get(currentPlayer);
   }
+
+  // Debug method to test WebSocket connection manually
+  async testWebSocketConnection(): Promise<void> {
+    console.log("🧪 Manual WebSocket Connection Test");
+    
+    await this.performNetworkDiagnostics();
+    
+    const testUrl = `${this.wsUrl}?sessionId=test&playerId=test`;
+    console.log("🔗 Testing WebSocket URL:", testUrl);
+    
+    try {
+      const testWs = new WebSocket(testUrl);
+      
+      testWs.onopen = () => {
+        console.log("✅ Test WebSocket connection successful!");
+        testWs.close(1000, "Test completed");
+      };
+      
+      testWs.onerror = (error) => {
+        console.error("❌ Test WebSocket connection failed:", error);
+      };
+      
+      testWs.onclose = (event) => {
+        console.log("🔒 Test WebSocket closed:", event.code, event.reason);
+      };
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        if (testWs.readyState !== WebSocket.OPEN) {
+          console.error("⏰ Test WebSocket connection timeout");
+          testWs.close();
+        }
+      }, 10000);
+      
+    } catch (error) {
+      console.error("🚨 Failed to create test WebSocket:", error);
+    }
+  }
 }
 
 export const sessionManager = new SessionManager();
+
+// Expose sessionManager globally for debugging in browser console
+if (typeof window !== 'undefined') {
+  (window as any).sessionManager = sessionManager;
+  console.log("🛠️ sessionManager exposed globally for debugging");
+  console.log("💡 Try: sessionManager.testWebSocketConnection()");
+}
 
 export function generateSessionCode(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
